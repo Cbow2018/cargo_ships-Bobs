@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.14
+Date: 2025-01-20
+  Features:
+    - Added setting to disable Floating electric pole.
+  Changes:
+    - Floating electric pole is now prohibited in Fulgora deep oil oceans.
+    - Cleaned up dependency list.
+  Bugfixes:
+    - Fixed crash when cancelling deconstruction requests not associated with an active player.
+    - Fixed crash when adding Cargo Ships to a save where Nauvis entity autoplace has been completely disabled.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.13
 Date: 2024-11-26
   Changes:
