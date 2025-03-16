@@ -117,10 +117,12 @@ if mods["angelspetrochem"] then
 end
 
 -- Add to Nauvis planet definition
-data.raw.planet.nauvis.map_gen_settings.autoplace_controls["offshore-oil"] = {}
-data.raw.planet.nauvis.map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] = {}
+if data.raw.planet.nauvis and data.raw.planet.nauvis.map_gen_settings then
+  data.raw.planet.nauvis.map_gen_settings.autoplace_controls["offshore-oil"] = {}
+  data.raw.planet.nauvis.map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] = {}
+end
 
-if mods["space-age"] then
+if mods["space-age"] and data.raw.planet.aquilo and data.raw.planet.aquilo.map_gen_settings then
   resource_autoplace.initialize_patch_set("offshore-oil", false, "aquilo")
 
   data:extend{
