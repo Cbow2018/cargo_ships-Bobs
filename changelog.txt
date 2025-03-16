@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.15
+Date: 2025-03-16
+  Bugfixes:
+    - Fixed that Boats could drive over elevated rail supports.
+    - Fixed that Buoys could be placed as elevated rail signals.
+    - Fixed compatibility with Subsurface mod.
+    - Fixed compatibility with mods that disable Nauvis or Aquilo map generation (including Solar System++).
+---------------------------------------------------------------------------------------------------
 Version: 1.0.14
 Date: 2025-01-20
   Features:
