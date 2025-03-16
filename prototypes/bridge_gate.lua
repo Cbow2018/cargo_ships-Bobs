@@ -1,4 +1,5 @@
 require "waterway-pictures"
+collision_mask_util = require "collision-mask-util"
 
 -- Support for  Schallfalke's Schall Transport Group mod
 local subgroup_shipequip = "water_transport"
@@ -27,6 +28,13 @@ local function invincible()
     }
   }
 end
+
+local function invisible_rail_mask()
+  m = collision_mask_util.get_mask(data.raw["straight-rail"]["straight-rail"])
+  m.water_tile = false
+  return m
+end
+
 
 -----------------------------------------------------------------------------------------
 
@@ -76,7 +84,7 @@ invisible_chain_signal.resistances = invincible()
 invisible_chain_signal.flags = {"not-blueprintable", "not-deconstructable", "placeable-neutral", "player-creation"}
 invisible_chain_signal.hidden = true
 invisible_chain_signal.selectable_in_game = false
-invisible_chain_signal.collision_mask = {layers = {object = true, rail = true}}  -- waterway added in data-final-fixes
+invisible_chain_signal.collision_mask = invisible_rail_mask()
 invisible_chain_signal.allow_copy_paste = false
 invisible_chain_signal.minable = nil
 invisible_chain_signal.ground_picture_set = {
@@ -113,7 +121,7 @@ invisible_rail.minable = nil
 invisible_rail.resistances = invincible()
 --invisible_rail.selection_box = nil
 --invisible_rail.selectable_in_game = false
-invisible_rail.collision_mask = {layers = {object = true}}  -- waterway_layer added in data-final-fixes
+invisible_rail.collision_mask = invisible_rail_mask()
 invisible_rail.allow_copy_paste = false
 
 
@@ -128,7 +136,7 @@ legacy_invisible_rail.minable = nil
 legacy_invisible_rail.resistances = invincible()
 --legacy_invisible_rail.selection_box = nil
 --legacy_invisible_rail.selectable_in_game = false
-legacy_invisible_rail.collision_mask = {layers = {object = true}}  -- waterway_layer added in data-final-fixes
+legacy_invisible_rail.collision_mask = invisible_rail_mask()
 legacy_invisible_rail.allow_copy_paste = false
 
 

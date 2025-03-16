@@ -35,6 +35,11 @@ local function invincible()
   }
 end
 
+local function water_rail_collision_mask()
+  return {layers = {object=true, rail=true}}
+end
+
+
 -- mapcolor doesn't work yet on rails for some reason
 data:extend({
   {
@@ -50,7 +55,7 @@ data:extend({
     corpse = nil,
     collision_box = {{-1.01, -0.95}, {1.01, 0.95}},
     selection_box = {{-1.7, -0.8}, {1.7, 0.8}},
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     pictures = legacy_waterway_pictures("straight_rail"),
     placeable_by = {item = "waterway", count = 1},
     localised_description = {"item-description.waterway"},
@@ -68,7 +73,7 @@ data:extend({
     corpse = nil,
     collision_box = {{-1, -2}, {1, 3.1}},
     selection_box = {{-1.7, -0.8}, {1.7, 0.8}},
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     pictures = legacy_waterway_pictures("curved_rail"),
     placeable_by = {item = "waterway", count = 1},
     localised_description = {"item-description.waterway"},
@@ -79,7 +84,7 @@ data:extend({
     order = "a[ground-rail]-a[straight-rail]",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-1, -1}, {1, 1}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},
@@ -99,7 +104,7 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.236}, {0.75, 2.236}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     tile_height = 2,
     extra_planner_goal_penalty = -4,
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
@@ -119,7 +124,7 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.516}, {0.75, 2.516}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},
@@ -138,7 +143,7 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.441}, {0.75, 2.441}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = {layers = {object = true}},  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},

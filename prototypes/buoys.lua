@@ -33,27 +33,17 @@ local buoy_connector = circuit_connector_definitions.create_vector
         get_variation_with_shifting(19, -25, 8),
       }
     )
+    
+local function buoy_collision_mask()
+  return {layers = {is_lower_object=true}}
+end
 
-local buoy = {
-  type = "rail-signal",
-  name = "buoy",
-  icon = GRAPHICSPATH .. "icons/buoy.png",
-  collision_mask = {layers = {object = true, is_lower_object = true}},  -- waterway_layer added in data-final-fixes
-  flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
-  fast_replaceable_group = "buoy-signal",
-  minable = {mining_time = 0.5, result = "buoy"},
-  max_health = 100,
-  dying_explosion = "rail-signal-explosion",
-  damaged_trigger_effect = data.raw["rail-signal"]["rail-signal"].damaged_trigger_effect,
-  collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
-  selection_box = {{-1.5, -0.5}, {-0.5, 0.5}},
-  --selection_box = {{-1.35, -0.65}, {-0.35, 0.35}}  -- This one doesn't work and ends up shifted oddly
-  --selection_box = {{-0.5, 0.5}, {-0.5, 0.5}}  -- This makes selection break completely, don't know why
+local function buoy_elevated_collision_mask()
+  return {layers={elevated_rail=true, water_tile=true, ground_tile=true, is_lower_object=true}}
+end
 
-  open_sound = data.raw["rail-signal"]["rail-signal"].open_sound,
-  close_sound = data.raw["rail-signal"]["rail-signal"].close_sound,
-  
-  ground_picture_set = {
+local function get_signal_buoy_picture_set()
+  return {
     structure = {
       layers = {
         {
@@ -84,7 +74,7 @@ local buoy = {
           shift = {0, -0.5},
           scale = 0.5,
           draw_as_glow = true,
-        },
+        }
       }
     },
     structure_align_to_animation_index =
@@ -197,50 +187,11 @@ local buoy = {
       red    = { light = {intensity = 0.3, size = 4, color={r=1, g=0,   b=0 }, shift = {0, -0.65}}, shift = { -1, 0 }},
     },
     circuit_connector = buoy_connector
-  },
-  elevated_picture_set = data.raw["rail-signal"]["rail-signal"].elevated_picture_set,
-  circuit_wire_max_distance = default_circuit_wire_max_distance,
-
-  default_red_output_signal = {type = "virtual", name = "signal-red"},
-  default_orange_output_signal = {type = "virtual", name = "signal-yellow"},
-  default_green_output_signal = {type = "virtual", name = "signal-green"},
-  
-  water_reflection = 
-  {
-    pictures =
-    {
-      filename = GRAPHICSPATH .. "entity/buoy/buoy_water_reflection-16.png",
-      width = 23,
-      height = 23,
-      variation_count = 16,
-      line_length = 1,
-      scale = 5
-    },
-    rotate = false,
-    orientation_to_variation = true
   }
-}
+end
 
----------------------------------------------------------------------------------------------------------------
-
-
-local chain_buoy = {
-  type = "rail-chain-signal",
-  name = "chain_buoy",
-  icon = GRAPHICSPATH .. "icons/chain_buoy.png",
-  flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
-  collision_mask = {layers = {object = true, is_lower_object = true}},  -- waterway_layer will be added in data-final-fixes
-  fast_replaceable_group = "buoy-signal",
-  minable = {mining_time = 0.5, result = "chain_buoy"},
-  max_health = 100,
-  dying_explosion = "rail-chain-signal-explosion",
-  collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
-  selection_box = {{-1.5, -0.5}, {-0.5, 0.5}},
-  damaged_trigger_effect = data.raw["rail-chain-signal"]["rail-chain-signal"].damaged_trigger_effect,
-  open_sound = data.raw["rail-chain-signal"]["rail-chain-signal"].open_sound,
-  close_sound = data.raw["rail-chain-signal"]["rail-chain-signal"].close_sound,
-  ground_picture_set = 
-  {
+local function get_chain_buoy_graphics_set()
+  return {
     structure =
     {
       layers = {
@@ -388,9 +339,74 @@ local chain_buoy = {
       blue   = { light = {intensity = 0.2, size = 4, color={r=0.4, g=0.4, b=1 }, shift = {0, -0.5}}, shift = { -1, 0 }},
     },
     circuit_connector = buoy_connector
-  },
+  }
+end
 
-  elevated_picture_set = data.raw["rail-chain-signal"]["rail-chain-signal"].elevated_picture_set,
+local buoy = {
+  type = "rail-signal",
+  name = "buoy",
+  icon = GRAPHICSPATH .. "icons/buoy.png",
+  collision_mask = buoy_collision_mask(),  -- waterway_layer added in data-final-fixes
+  elevated_collision_mask = buoy_elevated_collision_mask(),
+  flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
+  fast_replaceable_group = "buoy-signal",
+  minable = {mining_time = 0.5, result = "buoy"},
+  max_health = 100,
+  dying_explosion = "rail-signal-explosion",
+  damaged_trigger_effect = data.raw["rail-signal"]["rail-signal"].damaged_trigger_effect,
+  collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
+  selection_box = {{-1.5, -0.5}, {-0.5, 0.5}},
+  --selection_box = {{-1.35, -0.65}, {-0.35, 0.35}}  -- This one doesn't work and ends up shifted oddly
+  --selection_box = {{-0.5, 0.5}, {-0.5, 0.5}}  -- This makes selection break completely, don't know why
+
+  open_sound = data.raw["rail-signal"]["rail-signal"].open_sound,
+  close_sound = data.raw["rail-signal"]["rail-signal"].close_sound,
+  
+  ground_picture_set = get_signal_buoy_picture_set(),
+  elevated_picture_set = get_signal_buoy_picture_set(),
+  circuit_wire_max_distance = default_circuit_wire_max_distance,
+
+  default_red_output_signal = {type = "virtual", name = "signal-red"},
+  default_orange_output_signal = {type = "virtual", name = "signal-yellow"},
+  default_green_output_signal = {type = "virtual", name = "signal-green"},
+  
+  water_reflection = 
+  {
+    pictures =
+    {
+      filename = GRAPHICSPATH .. "entity/buoy/buoy_water_reflection-16.png",
+      width = 23,
+      height = 23,
+      variation_count = 16,
+      line_length = 1,
+      scale = 5
+    },
+    rotate = false,
+    orientation_to_variation = true
+  }
+}
+
+---------------------------------------------------------------------------------------------------------------
+
+
+local chain_buoy = {
+  type = "rail-chain-signal",
+  name = "chain_buoy",
+  icon = GRAPHICSPATH .. "icons/chain_buoy.png",
+  flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
+  collision_mask = buoy_collision_mask(),  -- waterway_layer will be added in data-final-fixes
+  elevated_collision_mask = buoy_elevated_collision_mask(),  -- Make it collide with everything so you can't place it on elevated rails hopefully
+  fast_replaceable_group = "buoy-signal",
+  minable = {mining_time = 0.5, result = "chain_buoy"},
+  max_health = 100,
+  dying_explosion = "rail-chain-signal-explosion",
+  collision_box = {{-0.2, -0.2}, {0.2, 0.2}},
+  selection_box = {{-1.5, -0.5}, {-0.5, 0.5}},
+  damaged_trigger_effect = data.raw["rail-chain-signal"]["rail-chain-signal"].damaged_trigger_effect,
+  open_sound = data.raw["rail-chain-signal"]["rail-chain-signal"].open_sound,
+  close_sound = data.raw["rail-chain-signal"]["rail-chain-signal"].close_sound,
+  ground_picture_set = get_chain_buoy_graphics_set(),
+  elevated_picture_set = get_chain_buoy_graphics_set(),
   circuit_wire_max_distance = default_circuit_wire_max_distance,
 
   default_red_output_signal = {type = "virtual", name = "signal-red"},
