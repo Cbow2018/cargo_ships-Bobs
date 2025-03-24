@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.16
+Date: 2025-03-24
+  Bugfixes:
+    - Fixed compatibility with Renai Transportation.
+    - Fixed another crash with mods that disable Nauvis.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.15
 Date: 2025-03-16
   Bugfixes:
