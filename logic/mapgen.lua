@@ -4,21 +4,25 @@
 function oil_generation_migration()
   if not prototypes.entity["offshore-oil"] then return end
   local map_gen_settings = game.planets.nauvis.surface.map_gen_settings
-  if (map_gen_settings.autoplace_settings.entity and 
+  if (map_gen_settings.autoplace_settings.entity and map_gen_settings.autoplace_settings.entity.settings and
       map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] == nil) then
     map_gen_settings.autoplace_controls["offshore-oil"] = {}
     map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] = {}
     game.planets.nauvis.surface.map_gen_settings = map_gen_settings
     game.planets.nauvis.surface.regenerate_entity("offshore-oil")
+  else
+    log("Entity autoplace settings are disabled for Nauvis, not adding offshore-oil")
   end
   if game.planets.aquilo and game.planets.aquilo.surface then
     local aquilo_map_gen_settings = game.planets.aquilo.surface.map_gen_settings
-    if (aquilo_map_gen_settings.autoplace_settings.entity and 
+    if (aquilo_map_gen_settings.autoplace_settings.entity and aquilo_map_gen_settings.autoplace_settings.entity.settings and
         aquilo_map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] == nil) then
       aquilo_map_gen_settings.autoplace_controls["aquilo_offshore_oil"] = {}
       aquilo_map_gen_settings.autoplace_settings.entity.settings["offshore-oil"] = {}
       game.planets.aquilo.surface.map_gen_settings = aquilo_map_gen_settings
       game.planets.aquilo.surface.regenerate_entity("offshore-oil")
+    else
+      log("Entity autoplace settings are disabled for Aquilo, not adding offshore-oil")
     end
   end
 end
