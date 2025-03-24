@@ -35,7 +35,7 @@ local buoy_connector = circuit_connector_definitions.create_vector
     )
     
 local function buoy_collision_mask()
-  return {layers = {is_lower_object=true}}
+  return {layers = {is_lower_object=true, rail=true}}
 end
 
 local function buoy_elevated_collision_mask()
