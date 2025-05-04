@@ -48,11 +48,11 @@ if settings.startup["no_catching_fish"].value then
 end
 
 -- Krastorio2 fuel compatibility
-if mods["Krastorio2"] and settings.startup['kr-rebalance-vehicles&fuels'].value then
-  data.raw.locomotive["cargo_ship_engine"].energy_source.fuel_categories = { "chemical", "vehicle-fuel" }
-  log("Updated cargo_ship_engine to use chemical fuel and Krastorio2 vehicle-fuel")
-  data.raw.locomotive["boat_engine"].energy_source.fuel_categories = { "vehicle-fuel" }
-  log("Updated boat_engine to use only Krastorio2 vehicle-fuel")
+if mods["Krastorio2"] then
+  log("Updated boats and ships to use Krastorio2 vehicle-fuel")
+  data.raw.locomotive["cargo_ship_engine"].energy_source.fuel_categories = { "chemical", "kr-vehicle-fuel" }
+  data.raw.locomotive["boat_engine"].energy_source.fuel_categories = { "kr-vehicle-fuel" }
+  data.raw.car.boat_indep.energy_source.fuel_categories = { "kr-vehicle-fuel" }
 end
 
 -- Ensure player collides with pump

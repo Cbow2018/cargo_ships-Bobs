@@ -1,6 +1,6 @@
 {
   "name": "cargo-ships",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "title": "Cargo Ships",
   "author": "rude_grass",
   "description": "Adds cargo ships, oil tankers, deep sea oil rigs and other ocean based content",
@@ -13,7 +13,7 @@
     "? Hovercrafts >= 1.1.0",
     "? angelspetrochem >= 0.9.17",
     "? ctg >= 0.4.3",
-    "? Krastorio2 >= 1.0.18"
+    "? Krastorio2"
   ],
   "package": {
     "ignore": [
