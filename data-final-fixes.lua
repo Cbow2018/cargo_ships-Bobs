@@ -52,7 +52,7 @@ if mods["Krastorio2"] then
   log("Updated boats and ships to use Krastorio2 vehicle-fuel")
   data.raw.locomotive["cargo_ship_engine"].energy_source.fuel_categories = { "chemical", "kr-vehicle-fuel" }
   data.raw.locomotive["boat_engine"].energy_source.fuel_categories = { "kr-vehicle-fuel" }
-  data.raw.car.boat_indep.energy_source.fuel_categories = { "kr-vehicle-fuel" }
+  data.raw.car["indep-boat"].energy_source.fuel_categories = { "kr-vehicle-fuel" }
 end
 
 -- Ensure player collides with pump

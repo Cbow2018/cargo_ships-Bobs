@@ -53,18 +53,6 @@ data:extend{
   },
   {
     type = "recipe",
-    name = "floating-electric-pole",
-    enabled = false,
-    energy_required = 2,
-    ingredients = {
-      {type="item", name="barrel", amount=4},
-      {type="item", name="big-electric-pole", amount=1},
-      {type="item", name="iron-plate", amount=5}
-    },
-    results = {{type="item", name="floating-electric-pole", amount=1}},
-  },
-  {
-    type = "recipe",
     name = "buoy",
     enabled = false,
     energy_required = 1,

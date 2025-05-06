@@ -1,6 +1,52 @@
 
 if not settings.startup["floating_pole_enabled"].value then return end
 
+data:extend{
+  {
+    type = "item",
+    name = "floating-electric-pole",
+    icon = GRAPHICSPATH .. "icons/floating_pole.png",
+    icon_size = 64,
+    flags = {},
+    subgroup = "energy-pipe-distribution",
+    order = "a[energy]-c[big-electric-pole]-a[floating-electric-pole]",
+    place_result = "floating-electric-pole",
+    stack_size = 50
+  },
+  {
+    type = "recipe",
+    name = "floating-electric-pole",
+    enabled = false,
+    energy_required = 2,
+    ingredients = {
+      {type="item", name="barrel", amount=4},
+      {type="item", name="big-electric-pole", amount=1},
+      {type="item", name="iron-plate", amount=5}
+    },
+    results = {{type="item", name="floating-electric-pole", amount=1}},
+  },
+  {
+    type = "technology",
+    name = "oversea-energy-distribution",
+    icon = GRAPHICSPATH .. "technology/oversea-energy-distribution.png",
+    icon_size = 256,
+    effects = {
+      unlock("floating-electric-pole"),
+    },
+    prerequisites = {"water_transport", "electric-energy-distribution-1"},
+    unit = {
+      count = 120,
+      ingredients = {
+        {"automation-science-pack", 1},
+        {"logistic-science-pack", 1},
+      },
+      time = 30
+    },
+    order = "c-e-b",
+  },
+
+}
+
 local floating_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
 floating_pole.name = "floating-electric-pole"
 floating_pole.icon = GRAPHICSPATH .. "icons/floating_pole.png"

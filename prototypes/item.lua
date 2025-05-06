@@ -114,17 +114,6 @@ data:extend{
   },
   {
     type = "item",
-    name = "floating-electric-pole",
-    icon = GRAPHICSPATH .. "icons/floating_pole.png",
-    icon_size = 64,
-    flags = {},
-    subgroup = "energy-pipe-distribution",
-    order = "a[energy]-c[big-electric-pole]-a[floating-electric-pole]",
-    place_result = "floating-electric-pole",
-    stack_size = 50
-  },
-  {
-    type = "item",
     name = "buoy",
     icon = GRAPHICSPATH .. "icons/buoy.png",
     icon_size = 64,

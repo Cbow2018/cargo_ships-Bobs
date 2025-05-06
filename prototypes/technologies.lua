@@ -68,25 +68,6 @@ data:extend ({
 },
 {
   type = "technology",
-  name = "oversea-energy-distribution",
-  icon = GRAPHICSPATH .. "technology/oversea-energy-distribution.png",
-  icon_size = 256,
-  effects = {
-    unlock("floating-electric-pole"),
-  },
-  prerequisites = {"water_transport", "electric-energy-distribution-1"},
-  unit = {
-    count = 120,
-    ingredients = {
-      {"automation-science-pack", 1},
-      {"logistic-science-pack", 1},
-    },
-    time = 30
-  },
-  order = "c-e-b",
-},
-{
-  type = "technology",
   name = "tank_ship",
   icon = GRAPHICSPATH .. "technology/tank_ship.png",
   icon_size = 256,

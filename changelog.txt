@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.18
+Date: 2025-05-06
+  Bugfixes:
+    - Fixed compatibility with Krastorio2 (for real this time).
+    - Fixed the setting to disable floating electric pole.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.17
 Date: 2025-05-04
   Bugfixes:
