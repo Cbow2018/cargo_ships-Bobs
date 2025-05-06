@@ -31,7 +31,10 @@ data:extend{
     icon = GRAPHICSPATH .. "technology/oversea-energy-distribution.png",
     icon_size = 256,
     effects = {
-      unlock("floating-electric-pole"),
+       {
+        type = "unlock-recipe",
+        recipe = "floating-electric-pole"
+      }
     },
     prerequisites = {"water_transport", "electric-energy-distribution-1"},
     unit = {
