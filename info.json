@@ -6,7 +6,7 @@
   "description": "Adds cargo ships, oil tankers, deep sea oil rigs and other ocean based content",
   "factorio_version": "2.0",
   "dependencies": [
-    "base >= 2.0.18",
+    "base >= 2.0.59",
     "cargo-ships-graphics >= 1.0.4",
     "? factorio-world >= 1.0.2",
     "? SeaBlock >= 0.5.5",

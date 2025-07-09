@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.20
+Date: 2025-07-XX
+  Changes:
+    - Changed deprecated API call LuaPlayer::pipette_entity() to LuaPlayer::pipette() per 2.0.59 release notes.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.19
 Date: 2025-05-06
   Bugfixes:
