@@ -1,8 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.20
-Date: 2025-07-XX
+Date: 2025-08-03
   Changes:
     - Changed deprecated API call LuaPlayer::pipette_entity() to LuaPlayer::pipette() per 2.0.59 release notes.
+    - Updated Hungarian translation from Crowdin
+  Bugfixes:
+    - Fixed that quality of items could be reset when robots deconstruct a ship.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.19
 Date: 2025-05-06

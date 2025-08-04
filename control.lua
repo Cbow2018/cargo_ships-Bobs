@@ -247,8 +247,8 @@ local function OnRobotPreMined(event)
               local stack = save_inventory[index]
               if stack.valid_for_read then
                 --game.print("Giving robot cargo stack: "..stack.name.." : "..stack.count)
-                local inserted = robotInventory.insert{name=stack.name, count=math.min(stack.count, robotSize)}
-                save_inventory.remove{name=stack.name, count=inserted}
+                local inserted = robotInventory.insert{name=stack.name, quality=stack.quality, count=math.min(stack.count, robotSize)}
+                save_inventory.remove{name=stack.name, quality=stack.quality, count=inserted}
                 if not robotInventory.is_empty() then
                   break
                 end
