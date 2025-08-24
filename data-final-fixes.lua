@@ -56,7 +56,6 @@ if mods["Krastorio2"] then
 end
 
 -- Ensure player collides with pump
-
 local pump = data.raw["pump"]["pump"]
 local pump_collision_mask = collision_mask_util.get_mask(pump)
 pump_collision_mask.layers["pump"] = true
@@ -106,4 +105,9 @@ if data.raw.resource["offshore-oil"] then
   -- Make sure the oil rig can burn crude-oil
   data.raw.fluid["crude-oil"].fuel_value = data.raw.fluid["crude-oil"].fuel_value or "100MJ"
 
+  -- Make offshore-oil match crude-oil infinite setting (Krastorio2 compat)
+  data.raw.resource["offshore-oil"].infinite = data.raw.resource["crude-oil"].infinite
+  data.raw.resource["offshore-oil"].minimum = data.raw.resource["crude-oil"].minimum
+  data.raw.resource["offshore-oil"].normal = data.raw.resource["crude-oil"].normal
+  
 end
