@@ -90,7 +90,7 @@ local function is_holding_pump(player)
   if player.is_cursor_blueprint() then
     local blueprint = player.cursor_record
     if blueprint then
-      if blueprint.type == "blueprint-book" then
+      if blueprint.type == "blueprint-book" and not blueprint.is_blueprint_preview then
         -- Check all blueprints in this library book, since we can't know which print player selected
         -- Don't check nested books
         for _,record in pairs(blueprint.contents) do
