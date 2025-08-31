@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.22
+Date: 2025-08-31
+  Changes:
+    - Offshore oil deposits now will be non-infinite if Crude Oil deposits are also non-infinite (Krastorio2 compatibility).
+  Bugfixes:
+    - Fixed crash when holding non-uploaded blueprint book in multiplayer.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.21
 Date: 2025-08-14
   Bugfixes:
