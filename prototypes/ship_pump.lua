@@ -1,9 +1,13 @@
 ----------------------------------------------------------------
 --------------------------- PUMP -------------------------------
 ----------------------------------------------------------------
+local collision_mask_util = require("collision-mask-util")
 
 local pump = data.raw["pump"]["pump"]
-pump.collision_mask = {layers = {object = true}}  -- Player collision with pump is handled in data-final-fixes.lua
+pump.collision_mask = collision_mask_util.get_default_mask("pump")
+pump.collision_mask.layers.water_tile = nil  -- Player collision with pump is handled in data-final-fixes.lua
+pump.collision_mask.layers.player = nil
+pump.collision_mask.layers.item = nil
 pump.water_reflection = {
   pictures = {
     filename = GRAPHICSPATH .. "entity/pump/pump-water-reflection.png",

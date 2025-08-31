@@ -109,5 +109,6 @@ if data.raw.resource["offshore-oil"] then
   data.raw.resource["offshore-oil"].infinite = data.raw.resource["crude-oil"].infinite
   data.raw.resource["offshore-oil"].minimum = data.raw.resource["crude-oil"].minimum
   data.raw.resource["offshore-oil"].normal = data.raw.resource["crude-oil"].normal
+  data.raw.resource["offshore-oil"].map_color = data.raw.resource["crude-oil"].map_color
   
 end
