@@ -89,18 +89,28 @@ local function is_holding_pump(player)
   -- Check for pump in blueprint player is holding
   if player.is_cursor_blueprint() then
     local blueprint = player.cursor_record
-    if blueprint then
-      if blueprint.type == "blueprint-book" and not blueprint.is_blueprint_preview then
+    if blueprint and blueprint.valid then
+      if blueprint.type == "blueprint-book" then
         -- Check all blueprints in this library book, since we can't know which print player selected
-        -- Don't check nested books
-        for _,record in pairs(blueprint.contents) do
-          if record.type == "blueprint" and not record.is_blueprint_preview and check_blueprint_for_pumps(record) then
-            return true
+        -- if not blueprint.is_blueprint_preview then  -- This doesn't work.  Do this hack instead (thanks boskid!):
+        if string.find(tostring(blueprint),"book preview") == nil then
+          for _,record in pairs(blueprint.contents) do
+            -- Don't check nested books
+            if record.type == "blueprint" and not record.is_blueprint_preview and check_blueprint_for_pumps(record) then
+              return true
+            end
           end
+        else
+          log("Can't read preview book!")
         end
         return false
-      elseif blueprint.type == "blueprint" and not blueprint.is_blueprint_preview then
-        return check_blueprint_for_pumps(blueprint)
+      elseif blueprint.type == "blueprint" then
+        if not blueprint.is_blueprint_preview then
+          return check_blueprint_for_pumps(blueprint)
+        else
+          log("Can't read preview blueprint!")
+          return false
+        end
       else
         return false
       end
