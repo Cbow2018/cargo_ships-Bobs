@@ -30,7 +30,7 @@ local function invincible()
 end
 
 local function invisible_rail_mask()
-  m = collision_mask_util.get_mask(data.raw["straight-rail"]["straight-rail"])
+  m = table.deepcopy(collision_mask_util.get_mask(data.raw["straight-rail"]["straight-rail"]))
   m.water_tile = false
   return m
 end

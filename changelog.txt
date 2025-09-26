@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.24
+Date: 2025-09-25
+  Bugfixes:
+    - Fixed collision mask corruption of vanilla straight rails (Fixes compatibility with Hovercrafts and Space Exploration among others). Thanks to Chips and Sasa for the report debugging help!
+---------------------------------------------------------------------------------------------------
 Version: 1.0.23
 Date: 2025-09-01
   Changes:
