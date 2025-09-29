@@ -73,12 +73,43 @@ function UpdateVisuals(e)
 end
 
 
-local function check_blueprint_for_pumps(blueprint)
-  local blueprint_entities = blueprint.get_blueprint_entities()
-  if blueprint_entities then
-    for _, bp_entity in pairs(blueprint_entities) do
-      if bp_entity.name == "pump" then
-        return true
+local function check_item_is_pump(name)
+  return (name == "pump")
+end
+
+local function check_record_for_pumps(player, record)
+  if not record or not record.valid or record.is_preview then
+    return false
+  end
+  if record.type == "blueprint-book" then
+    return check_record_for_pumps(player, record.get_selected_record(player))
+  elseif record.type == "blueprint" then
+    local blueprint_entities = blueprint.get_blueprint_entities()
+    if blueprint_entities then
+      for _, bp_entity in pairs(blueprint_entities) do
+        if check_item_is_pump(bp_entity.name) then
+          return true
+        end
+      end
+    end
+  end
+  return false
+end
+
+local function check_stack_for_pumps(stack)
+  if not stack or not stack.valid_for_read then
+    return false
+  end
+  if stack.is_blueprint_book then
+    local inside_stack = stack.get_inventory(defines.inventory.item_main)[stack.active_index]
+    return check_stack_for_pumps(inside_stack)
+  elseif stack.is_blueprint then
+    local blueprint_entities = stack.get_blueprint_entities()
+    if blueprint_entities then
+      for _, bp_entity in pairs(blueprint_entities) do
+        if check_item_is_pump(bp_entity.name) then
+          return true
+        end
       end
     end
   end
@@ -88,71 +119,33 @@ end
 local function is_holding_pump(player)
   -- Check for pump in blueprint player is holding
   if player.is_cursor_blueprint() then
-    local blueprint = player.cursor_record
-    if blueprint and blueprint.valid then
-      if blueprint.type == "blueprint-book" then
-        -- Check all blueprints in this library book, since we can't know which print player selected
-        -- if not blueprint.is_blueprint_preview then  -- This doesn't work.  Do this hack instead (thanks boskid!):
-        if string.find(tostring(blueprint),"book preview") == nil then
-          for _,record in pairs(blueprint.contents) do
-            -- Don't check nested books
-            if record.type == "blueprint" and not record.is_blueprint_preview and check_blueprint_for_pumps(record) then
-              return true
-            end
-          end
-        else
-          log("Can't read preview book!")
-        end
-        return false
-      elseif blueprint.type == "blueprint" then
-        if not blueprint.is_blueprint_preview then
-          return check_blueprint_for_pumps(blueprint)
-        else
-          log("Can't read preview blueprint!")
-          return false
-        end
-      else
-        return false
-      end
+    if player.cursor_record then
+      return check_record_for_pumps(player, player.cursor_record)
     else
-      -- No library book or blueprint, so check cursor item
-      blueprint = player.cursor_stack
-      if not (blueprint and blueprint.valid_for_read) then
-        -- Cursor stack is not present for some reason
-        return false
-      end
-      -- Check item blueprint book recursively
-      while blueprint.is_blueprint_book do
-        -- Get active blueprint from this book item
-        blueprint = blueprint.get_inventory(defines.inventory.item_main)[blueprint.active_index]
-      end
-      if blueprint.is_blueprint then
-        -- Check the blueprint for pumps
-        return check_blueprint_for_pumps(blueprint)
-      end
-      -- Cursor is not a blueprint, or entry from book was not a blueprint
-      return false
+      return check_stack_for_pumps(player.cursor_stack)
     end
   end
   
   -- Check for actual pump item in cursor
   local stack = player.cursor_stack
-  if stack and stack.valid_for_read and stack.name == "pump" then
+  if stack and stack.valid_for_read and check_item_is_pump(stack.name) then
     return true
   end
   
   -- Check for pump ghost in cursor
   local ghost = player.cursor_ghost
-  if ghost and ghost.name.name == "pump" then
+  if ghost and check_item_is_pump(ghost.name.name) then
     return true
   end
+  
+  return false
 end
 
 function PumpVisualisation(e)
   local player = game.get_player(e.player_index)
 
   local holding_pump = is_holding_pump(player)
-
+  
   if (not storage.ship_pump_selected[e.player_index]) and holding_pump then
     -- if current is pump and last was not
     AddVisuals(player)

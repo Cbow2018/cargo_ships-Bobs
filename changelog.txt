@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.25
+Date: 2025-XX-XX
+  Changes:
+    - Pump visualisation properly reads only the selected blueprint in a book or nested books.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.24
 Date: 2025-09-25
   Bugfixes:
