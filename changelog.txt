@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.25
-Date: 2025-XX-XX
+Date: 2025-10-02
   Changes:
     - Pump visualisation properly reads only the selected blueprint in a book or nested books.
+    - Added compatibility with AAI Industries (and Space Exploration) "processed chemical" fuel.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.24
 Date: 2025-09-25

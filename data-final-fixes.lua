@@ -49,10 +49,18 @@ end
 
 -- Krastorio2 fuel compatibility
 if mods["Krastorio2"] then
-  log("Updated boats and ships to use Krastorio2 vehicle-fuel")
+  log("Updating boats and ships to use Krastorio2 kr-vehicle-fuel fuel category")
   data.raw.locomotive["cargo_ship_engine"].energy_source.fuel_categories = { "chemical", "kr-vehicle-fuel" }
   data.raw.locomotive["boat_engine"].energy_source.fuel_categories = { "kr-vehicle-fuel" }
   data.raw.car["indep-boat"].energy_source.fuel_categories = { "kr-vehicle-fuel" }
+end
+
+-- AAI/Space Exploration fuel compatibility
+if mods["aai-industry"] then
+  log("Updating boats and ships to use AAI Industry processed-chemcial fuel category")
+  table.insert(data.raw.locomotive["cargo_ship_engine"].energy_source.fuel_categories, "processed-chemical")
+  table.insert(data.raw.locomotive["boat_engine"].energy_source.fuel_categories, "processed-chemical")
+  table.insert(data.raw.car["indep-boat"].energy_source.fuel_categories, "processed-chemical")
 end
 
 -- Ensure player collides with pump
