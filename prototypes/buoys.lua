@@ -348,6 +348,13 @@ local buoy = {
   icon = GRAPHICSPATH .. "icons/buoy.png",
   collision_mask = buoy_collision_mask(),  -- waterway_layer added in data-final-fixes
   elevated_collision_mask = buoy_elevated_collision_mask(),
+  tile_buildability_rules = {
+    {
+      area = {{-0.2, -0.2}, {0.2, 0.2}},
+      required_tiles = {layers={water_tile=true}},
+      remove_on_collision = true
+    }
+  },
   flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
   fast_replaceable_group = "buoy-signal",
   minable = {mining_time = 0.5, result = "buoy"},
@@ -396,6 +403,13 @@ local chain_buoy = {
   flags = {"placeable-neutral", "player-creation", "building-direction-16-way", "filter-directions"},
   collision_mask = buoy_collision_mask(),  -- waterway_layer will be added in data-final-fixes
   elevated_collision_mask = buoy_elevated_collision_mask(),  -- Make it collide with everything so you can't place it on elevated rails hopefully
+  tile_buildability_rules = {
+    {
+      area = {{-0.2, -0.2}, {0.2, 0.2}},
+      required_tiles = {layers={water_tile=true}},
+      remove_on_collision = true
+    }
+  },
   fast_replaceable_group = "buoy-signal",
   minable = {mining_time = 0.5, result = "chain_buoy"},
   max_health = 100,

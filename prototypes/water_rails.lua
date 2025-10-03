@@ -55,7 +55,14 @@ data:extend({
     corpse = nil,
     collision_box = {{-1.01, -0.95}, {1.01, 0.95}},
     selection_box = {{-1.7, -0.8}, {1.7, 0.8}},
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.95, -0.95}, {0.95, 0.95}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     pictures = legacy_waterway_pictures("straight_rail"),
     placeable_by = {item = "waterway", count = 1},
     localised_description = {"item-description.waterway"},
@@ -73,7 +80,14 @@ data:extend({
     corpse = nil,
     collision_box = {{-1, -2}, {1, 3.1}},
     selection_box = {{-1.7, -0.8}, {1.7, 0.8}},
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.95, -1.95}, {0.95, 2.95}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     pictures = legacy_waterway_pictures("curved_rail"),
     placeable_by = {item = "waterway", count = 1},
     localised_description = {"item-description.waterway"},
@@ -84,13 +98,19 @@ data:extend({
     order = "a[ground-rail]-a[straight-rail]",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-1, -1}, {1, 1}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.95, -0.95}, {0.95, 0.95}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},
     max_health = 200,
     corpse = nil,
-    -- collision box is hardcoded for rails as to avoid unexpected changes in the way rail blocks are merged
     selection_box = {{-1.7, -0.8}, {1.7, 0.8}},
     pictures = new_waterway_pictures("straight"),
     placeable_by = {item = "waterway", count = 1},
@@ -104,7 +124,14 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.236}, {0.75, 2.236}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.75, -2.236}, {0.75, 2.236}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     tile_height = 2,
     extra_planner_goal_penalty = -4,
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
@@ -124,7 +151,14 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.516}, {0.75, 2.516}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.75, -2.516}, {0.75, 2.516}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},
@@ -143,7 +177,14 @@ data:extend({
     deconstruction_alternative = "straight-waterway",
     icon = GRAPHICSPATH .. "icons/water_rail.png",
     collision_box = {{-0.75, -2.441}, {0.75, 2.441}}, -- has custommly generated box, but the prototype needs something that is used to generate building smokes
-    collision_mask = water_rail_collision_mask(),  -- waterway_layer added in data-final-fixes
+    collision_mask = water_rail_collision_mask(),
+    tile_buildability_rules = {
+      {
+        area = {{-0.75, -2.441}, {0.75, 2.441}},
+        required_tiles = {layers={water_tile=true}},
+        remove_on_collision = true
+      }
+    },
     flags = {"placeable-neutral", "player-creation", "building-direction-8-way"},
     resistances = invincible(),
     minable = {mining_time = 0.2},

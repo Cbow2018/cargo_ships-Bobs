@@ -4,41 +4,11 @@ local collision_mask_util = require("__core__/lualib/collision-mask-util")
 data:extend{
   {
     type = "collision-layer",
-    name = "waterway",
-  },
-  {
-    type = "collision-layer",
     name = "pump",
   },
 }
 
-
--- Prevent waterways being placed on land, but without colliding with ground-tile directly, so that ships don't collide
-for _, tile in pairs(data.raw.tile) do
-  if tile.collision_mask.layers["ground_tile"] then
-    tile.collision_mask.layers["waterway"] = true
-  end
-end
-data.raw["straight-rail"]["straight-waterway"].collision_mask.layers["waterway"] = true
-data.raw["half-diagonal-rail"]["half-diagonal-waterway"].collision_mask.layers["waterway"] = true
-data.raw["curved-rail-a"]["curved-waterway-a"].collision_mask.layers["waterway"] = true
-data.raw["curved-rail-b"]["curved-waterway-b"].collision_mask.layers["waterway"] = true
-data.raw["legacy-straight-rail"]["legacy-straight-waterway"].collision_mask.layers["waterway"] = true
-data.raw["legacy-curved-rail"]["legacy-curved-waterway"].collision_mask.layers["waterway"] = true
-
-
-data.raw["rail-signal"]["buoy"].collision_mask.layers["waterway"] = true
-data.raw["rail-chain-signal"]["chain_buoy"].collision_mask.layers["waterway"] = true
-data.raw["rail-chain-signal"]["invisible-chain-signal"].collision_mask.layers["waterway"] = true
-
 data.raw.tile["landfill"].check_collision_with_entities = true
-
--- Change drawing of fish to be underneath bridges
--- TODO 2.0 check if needed
---data.raw.fish["fish"].collision_mask = {"ground-tile", "colliding-with-tiles-only"}
---data.raw.fish["fish"].pictures[1].draw_as_shadow = true
---data.raw.fish["fish"].pictures[2].draw_as_shadow = true
---data.raw.fish["fish"].selection_priority = 48
 
 -- Change inserters to not catch fish when waiting for ships
 if settings.startup["no_catching_fish"].value then
@@ -62,6 +32,19 @@ if mods["aai-industry"] then
   table.insert(data.raw.locomotive["boat_engine"].energy_source.fuel_categories, "processed-chemical")
   table.insert(data.raw.car["indep-boat"].energy_source.fuel_categories, "processed-chemical")
 end
+
+-- Ensure water rails don't collide with FISH when Space Exploration is installed
+data.raw["straight-rail"]["straight-waterway"].collision_mask.layers.space_tile = nil
+data.raw["half-diagonal-rail"]["half-diagonal-waterway"].collision_mask.layers.space_tile = nil
+data.raw["curved-rail-a"]["curved-waterway-a"].collision_mask.layers.space_tile = nil
+data.raw["curved-rail-b"]["curved-waterway-b"].collision_mask.layers.space_tile = nil
+data.raw["legacy-straight-rail"]["legacy-straight-waterway"].collision_mask.layers.space_tile = nil
+data.raw["legacy-curved-rail"]["legacy-curved-waterway"].collision_mask.layers.space_tile = nil
+
+
+data.raw["rail-signal"]["buoy"].collision_mask.layers.space_tile = nil
+data.raw["rail-chain-signal"]["chain_buoy"].collision_mask.layers.space_tile = nil
+data.raw["rail-chain-signal"]["invisible-chain-signal"].collision_mask.layers.space_tile = nil
 
 -- Ensure player collides with pump
 local pump = data.raw["pump"]["pump"]
