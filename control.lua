@@ -46,9 +46,10 @@ local function OnEntityBuilt(event)
   -- check ghost entities first
   if entity.name == "entity-ghost" then
     if is_waterway[entity.ghost_name] then
-      if not entity.silent_revive{raise_revive = true} then
-        entity.destroy()
-      end
+      -- Attempt to revive the waterway ghost
+      -- If this fails, then it is waiting for a tile to be deconstructed under it.
+      -- A robot will come later and revive it after the tiles are removed (no item required)
+      entity.silent_revive{raise_revive = true}
     elseif entity.ghost_name == "bridge_gate" then
       -- Replace with proper bridge_base ghost
       HandleBridgeGhost(entity)
