@@ -555,4 +555,36 @@ local or_tank =
   circuit_wire_max_distance = default_circuit_wire_max_distance,
 }
 
+
+if feature_flags.freezing then
+  local icon_source = data.raw.reactor["heating-tower"] or data.raw.reactor["nuclear-reactor"]
+  data:extend{
+    {
+      type = "reactor",
+      name = "or_reactor",
+      icons = util.combine_icons(oil_rig.icons, get_icons(icon_source), icon_inputs),
+      flags = {"not-blueprintable", "not-deconstructable", "placeable-off-grid"},
+      hidden = true,
+      max_health = oil_rig.max_health,
+      selectable_in_game = false,
+      allow_copy_paste = false,
+      collision_mask = {layers = {}},
+      selection_box = oil_rig.selection_box,
+      scale_energy_usage = true,
+      energy_source = {
+        type = "electric",
+        usage_priority = "secondary-input",
+      },
+      consumption = "1MW",
+      heating_radius = 4.5,
+      heat_buffer = 
+      {
+        max_temperature = 500,
+        specific_heat = "100MJ",
+        max_transfer = "10MW",
+      },
+    }
+  }
+end
+
 data:extend{oil_rig, oil_rig_migration, or_power_electric, or_pole, or_radar, or_tank}

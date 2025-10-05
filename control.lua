@@ -519,6 +519,9 @@ local function init()
       UnlockOilProcessing(oil_rig.entity.force)
     end
   end
+  
+  -- Add Heating Reactors to Oil Rigs on Aquilo etc if necessary
+  MigrateOilRigReactors()
 
   -- Enable offshore oil generation if it has been added to a save
   oil_generation_migration()

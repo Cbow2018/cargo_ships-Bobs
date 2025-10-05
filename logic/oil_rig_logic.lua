@@ -19,6 +19,14 @@ function CreateOilRig(entity, player, robot)
   local power = surface.create_entity{name="or_power_electric", quality=quality, position=position, force=force, create_build_effect_smoke=false}
   local radar = surface.create_entity{name="or_radar", quality=quality, position=position, force=force, create_build_effect_smoke=false}
   
+  -- Only make a reactor if it's on a surface that needs heating
+  local reactor
+  local need_reactor = false
+  if prototypes.entity["or_reactor"] and (surface.planet and surface.planet.prototype.entities_require_heating) then
+    reactor = surface.create_entity{name="or_reactor", quality=quality, position=position, force=force, create_build_effect_smoke=false}
+    need_reactor = true
+  end
+  
   local pole,dummy
   local pole_ghost = surface.find_entities_filtered{ghost_name = "or_pole", position = position, radius = 1, limit = 1}[1]
   if pole_ghost then
@@ -40,7 +48,7 @@ function CreateOilRig(entity, player, robot)
   end
   
   -- If there was a problem, cancel the construction
-  if not (power and pole and radar and tank) then
+  if not (power and pole and radar and tank and (reactor or not need_reactor)) then
     --game.print("Could not create all oil rig components.")
     if player then
       player.mine_entity(entity, true)
@@ -54,6 +62,7 @@ function CreateOilRig(entity, player, robot)
     if tank then tank.destroy() end
     if power then power.destroy() end
     if radar then radar.destroy() end
+    if reactor then reactor.destroy() end
     return nil
   end
   
@@ -62,6 +71,7 @@ function CreateOilRig(entity, player, robot)
   pole.destructible = false
   radar.destructible = false
   tank.destructible = false
+  if reactor then reactor.destructible = false end
   -- Link pumpjack and generator to tank
   entity.fluidbox.add_linked_connection(1, tank, 1)
   power.fluidbox.add_linked_connection(1, tank, 2)
@@ -74,7 +84,8 @@ function CreateOilRig(entity, player, robot)
       pole = pole,
       radar = radar,
       power = power,
-      tank = tank
+      tank = tank,
+      reactor = reactor
     }
   storage.oil_rigs[entity.unit_number] = entry
   script.register_on_object_destroyed(entity)
@@ -84,12 +95,31 @@ function CreateOilRig(entity, player, robot)
 end
 
 function DestroyOilRig(unit_number)
+  game.print("destroying oil rig "..tostring(unit_number))
   if storage.oil_rigs and storage.oil_rigs[unit_number] then
     local data = storage.oil_rigs[unit_number]
-    if data.pole and data.pole.valid then data.pole.destroy() end
-    if data.radar and data.radar.valid then data.radar.destroy() end
-    if data.power and data.power.valid then data.power.destroy() end
-    if data.tank and data.tank.valid then data.tank.destroy() end
+    game.print(serpent.block(data))
+    if data.pole and data.pole.valid then
+      game.print("Pole: yes")
+      data.pole.destroy()
+    end
+    if data.radar and data.radar.valid then
+      game.print("Radar: "..tostring(data.radar.destroy()))
+      
+    end
+    if data.power and data.power.valid then
+      game.print("Power: "..tostring(data.power.destroy()))
+      
+    end
+    if data.tank and data.tank.valid then
+      game.print("Tank: "..tostring(data.tank.destroy()))
+      
+    end
+    if data.reactor and data.reactor.valid then
+      game.print("Reactor: "..tostring(data.reactor.destroy()))
+      
+    end
+    game.print(serpent.block(data))
     storage.oil_rigs[unit_number] = nil
     return true
   end
@@ -128,4 +158,32 @@ function HandleOilRigPartGhost(ghost)
   -- No matching recent oil rig and none found, delete ghost
   ghost.destroy()
   storage.recent_oil_rig = nil
+end
+
+-- Add missing reactors to any oil rigs on heating-required surfaces
+-- Used in on_configuration_changed since this could change with mods being installed I guess
+function MigrateOilRigReactors()
+  if prototypes.entity["or_reactor"] then
+    if storage.oil_rigs then
+      log(serpent.block(storage.oil_rigs))
+      for unit_number, rig_data in pairs(storage.oil_rigs) do
+        local surface = rig_data.surface
+        if surface.planet and surface.planet.prototype.entities_require_heating and not rig_data.reactor then
+          rig_data.reactor = surface.create_entity{name="or_reactor", quality=rig_data.entity.quality, position=rig_data.position, force=rig_data.entity.force, create_build_effect_smoke=false}
+          log("Added Oil Rig Reactor to oil rig on surface "..surface.name.." at "..util.positiontostr(rig_data.position))
+        end
+      end
+      log(serpent.block(storage.oil_rigs))
+    end
+  else
+    -- No more heating, remove dead references to reactors that don't exist
+    if storage.oil_rigs then
+      log(serpent.block(storage.oil_rigs))
+      for unit_number, rig_data in pairs(storage.oil_rigs) do
+        rig_data.reactor = nil
+        log("Removed reactor reference from oil rig")
+      end
+      log(serpent.block(storage.oil_rigs))
+    end
+  end
 end
