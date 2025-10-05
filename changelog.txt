@@ -1,9 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.25
-Date: 2025-10-02
+Date: 2025-10-05
+  Features:
+    - Oil Rig now provides heating for adjacent pumps on Aquilo.
   Changes:
-    - Pump visualisation properly reads only the selected blueprint in a book or nested books.
     - Added compatibility with AAI Industries (and Space Exploration) "processed chemical" fuel.
+  Bugfixes:
+    - Fixed that waterways could not be placed on top of fish when AAI Industries/Space Exploration was installed.
+    - Fixed that pump placement squares would appear even if selected blueprint (from a book) did not have pumps in it.
+    - Fixed that super-force-placing Waterways on top of Landfill would not actually build waterways.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.24
 Date: 2025-09-25
