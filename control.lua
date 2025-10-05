@@ -520,7 +520,7 @@ local function init()
     end
   end
   
-  -- Add Heating Reactors to Oil Rigs on Aquilo etc if necessary
+  -- Add Heating Reactors to Oil Rigs on Aquilo etc if necessary (in case a mod changed the heating flag or a surface condition)
   MigrateOilRigReactors()
 
   -- Enable offshore oil generation if it has been added to a save

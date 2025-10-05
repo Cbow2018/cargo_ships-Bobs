@@ -308,15 +308,15 @@ local or_power_electric = {
 }
 -- Set the generator power output based on the setting
 if external_power == "disabled" then
-  or_power_electric.max_power_output = "100kW"  -- Just enough for surrounding pumps
-  or_power_electric.energy_source.output_flow_limit = "100kW"
+  or_power_electric.max_power_output = "300kW"  -- Just enough for surrounding pumps and heating
+  or_power_electric.energy_source.output_flow_limit = "300kW"
 elseif external_power == "enabled" then
   or_power_electric.max_power_output = "0kW"
   or_power_electric.energy_source.output_flow_limit = "0kW"
   or_power_electric.fluid_box.volume = 100
 elseif external_power == "only-when-moduled" then
-  or_power_electric.max_power_output = "850kW"  -- 750kW for the rig, 100kW for surrounding pumps
-  or_power_electric.energy_source.output_flow_limit = "850kW"
+  or_power_electric.max_power_output = "1050kW"  -- 750kW for the rig, 100kW for surrounding pumps, 200kW for heating
+  or_power_electric.energy_source.output_flow_limit = "1050kW"
 end
 
 
@@ -557,12 +557,14 @@ local or_tank =
 
 
 if feature_flags.freezing then
-  local icon_source = data.raw.reactor["heating-tower"] or data.raw.reactor["nuclear-reactor"]
+  local heat_sprite = data.raw["utility-sprites"].default.heat_exchange_indication
+  local heat_icon = {{icon=heat_sprite.filename, icon_size=heat_sprite.width}}
+  local heat_icon_inputs = {tint={1,0.4,0.4}, scale=0.6, shift={7,-7}}
   data:extend{
     {
       type = "reactor",
       name = "or_reactor",
-      icons = util.combine_icons(oil_rig.icons, get_icons(icon_source), icon_inputs),
+      icons = util.combine_icons(oil_rig.icons, heat_icon, heat_icon_inputs),
       flags = {"not-blueprintable", "not-deconstructable", "placeable-off-grid"},
       hidden = true,
       max_health = oil_rig.max_health,
@@ -575,13 +577,13 @@ if feature_flags.freezing then
         type = "electric",
         usage_priority = "secondary-input",
       },
-      consumption = "1MW",
+      consumption = "200kW",
       heating_radius = 4.5,
       heat_buffer = 
       {
-        max_temperature = 500,
-        specific_heat = "100MJ",
-        max_transfer = "10MW",
+        max_temperature = 100,
+        specific_heat = "1200kJ",
+        max_transfer = "200kW",
       },
     }
   }

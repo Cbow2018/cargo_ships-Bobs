@@ -8,7 +8,6 @@
   "dependencies": [
     "base >= 2.0.67",
     "cargo-ships-graphics >= 1.0.4",
-    "? space-age",
     "(?) factorio-world",
     "(?) SeaBlock",
     "(?) Hovercrafts",
