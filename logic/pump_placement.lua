@@ -84,7 +84,7 @@ local function check_record_for_pumps(player, record)
   if record.type == "blueprint-book" then
     return check_record_for_pumps(player, record.get_selected_record(player))
   elseif record.type == "blueprint" then
-    local blueprint_entities = blueprint.get_blueprint_entities()
+    local blueprint_entities = record.get_blueprint_entities()
     if blueprint_entities then
       for _, bp_entity in pairs(blueprint_entities) do
         if check_item_is_pump(bp_entity.name) then
