@@ -3,7 +3,7 @@ Version: 1.0.25
 Date: 2025-10-05
   Features:
     - Oil Rig now provides heating for adjacent pumps on Aquilo.
-    - Added settings to allow Floating Electric Pole on Oil Ocean and Ammoniacal Ocean (off by default).
+    - Added settings to allow Floating electric pole on Oil ocean and Ammoniacal ocean (off by default).
   Changes:
     - Added compatibility with AAI Industries (and Space Exploration) "processed chemical" fuel.
   Bugfixes:
