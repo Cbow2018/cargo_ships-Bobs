@@ -1,14 +1,37 @@
 require("__cargo-ships__/constants")
 local collision_mask_util = require("__core__/lualib/collision-mask-util")
 
-data:extend{
-  {
-    type = "collision-layer",
-    name = "pump",
-  },
-}
-
 data.raw.tile["landfill"].check_collision_with_entities = true
+
+-- Apply Space Age power pole tile settings
+if settings.startup["floating_pole_enabled"].value and mods["space-age"] then
+  local colliding_layers = {}
+  if not settings.startup["floating_pole_fulgora"].value then
+    data:extend{
+      {
+        type = "collision-layer",
+        name = "oil_ocean_tile",
+      },
+    }
+    data.raw.tile["oil-ocean-shallow"].collision_mask.layers.oil_ocean_tile = true
+    data.raw.tile["oil-ocean-deep"].collision_mask.layers.oil_ocean_tile = true
+    colliding_layers.oil_ocean_tile = true
+  end
+  
+  if not settings.startup["floating_pole_aquilo"].value then
+    data:extend{
+      {
+        type = "collision-layer",
+        name = "ammoniacal_ocean_tile",
+      },
+    }
+    data.raw.tile["ammoniacal-ocean"].collision_mask.layers.ammoniacal_ocean_tile = true
+    data.raw.tile["ammoniacal-ocean-2"].collision_mask.layers.ammoniacal_ocean_tile = true
+    colliding_layers.ammoniacal_ocean_tile = true
+  end
+  
+  data.raw["electric-pole"]["floating-electric-pole"].tile_buildability_rules[1].colliding_tiles = {layers=colliding_layers}
+end
 
 -- Change inserters to not catch fish when waiting for ships
 if settings.startup["no_catching_fish"].value then
@@ -47,6 +70,12 @@ data.raw["rail-chain-signal"]["chain_buoy"].collision_mask.layers.space_tile = n
 data.raw["rail-chain-signal"]["invisible-chain-signal"].collision_mask.layers.space_tile = nil
 
 -- Ensure player collides with pump
+data:extend{
+  {
+    type = "collision-layer",
+    name = "pump",
+  },
+}
 local pump = data.raw["pump"]["pump"]
 local pump_collision_mask = collision_mask_util.get_mask(pump)
 pump_collision_mask.layers["pump"] = true

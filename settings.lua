@@ -1,4 +1,4 @@
-data:extend({
+data:extend{
   {
     type = "bool-setting",
     name = "floating_pole_enabled",
@@ -105,4 +105,23 @@ data:extend({
     default_value = true,
     order = "c-d"
   }
-})
+}
+
+if mods["space-age"] then
+  data:extend{
+    {
+      type = "bool-setting",
+      name = "floating_pole_fulgora",
+      setting_type = "startup",
+      default_value = false,
+      order = "a-ab"
+    },
+    {
+      type = "bool-setting",
+      name = "floating_pole_aquilo",
+      setting_type = "startup",
+      default_value = false,
+      order = "a-ac"
+    },
+  }
+end

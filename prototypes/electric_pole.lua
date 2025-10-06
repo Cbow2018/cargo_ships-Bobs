@@ -1,3 +1,4 @@
+local collision_mask_util = require("__core__/lualib/collision-mask-util")
 
 if not settings.startup["floating_pole_enabled"].value then return end
 
@@ -55,7 +56,10 @@ floating_pole.name = "floating-electric-pole"
 floating_pole.icon = GRAPHICSPATH .. "icons/floating_pole.png"
 floating_pole.icon_size = 64
 floating_pole.minable = {mining_time = 0.5, result = "floating-electric-pole"}
-floating_pole.collision_mask = {layers = {ground_tile = true, object = true, rail_support = true}}
+for layer,_ in pairs(data.raw.tile.water.collision_mask.layers) do
+  floating_pole.collision_mask.layers[layer] = nil
+end
+floating_pole.tile_buildability_rules = { {area={left_top={-1,-1},right_bottom={1,1}}, required_tiles={layers={water_tile=true}}} }
 floating_pole.maximum_wire_distance = 48
 floating_pole.supply_area_distance = 0
 floating_pole.fast_replaceable_group = nil
@@ -179,5 +183,6 @@ for _,v in pairs(floating_pole.connection_points) do
   v.shadow.green[2] = v.shadow.green[2] + 0.5
   v.shadow.red[2] = v.shadow.red[2] + 0.5
 end
+
 
 data:extend{floating_pole}
