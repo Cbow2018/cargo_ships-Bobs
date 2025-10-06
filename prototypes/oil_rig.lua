@@ -582,7 +582,7 @@ if feature_flags.freezing then
       heat_buffer = 
       {
         max_temperature = 100,
-        specific_heat = "1200kJ",
+        specific_heat = "200kJ",
         max_transfer = "200kW",
       },
     }

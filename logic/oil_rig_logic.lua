@@ -95,31 +95,23 @@ function CreateOilRig(entity, player, robot)
 end
 
 function DestroyOilRig(unit_number)
-  game.print("destroying oil rig "..tostring(unit_number))
   if storage.oil_rigs and storage.oil_rigs[unit_number] then
     local data = storage.oil_rigs[unit_number]
-    game.print(serpent.block(data))
     if data.pole and data.pole.valid then
-      game.print("Pole: yes")
       data.pole.destroy()
     end
     if data.radar and data.radar.valid then
-      game.print("Radar: "..tostring(data.radar.destroy()))
-      
+      data.radar.destroy()
     end
     if data.power and data.power.valid then
-      game.print("Power: "..tostring(data.power.destroy()))
-      
+      data.power.destroy()
     end
     if data.tank and data.tank.valid then
-      game.print("Tank: "..tostring(data.tank.destroy()))
-      
+      data.tank.destroy()
     end
     if data.reactor and data.reactor.valid then
-      game.print("Reactor: "..tostring(data.reactor.destroy()))
-      
+      data.reactor.destroy()
     end
-    game.print(serpent.block(data))
     storage.oil_rigs[unit_number] = nil
     return true
   end

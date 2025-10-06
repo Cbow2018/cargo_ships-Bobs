@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.26
+Date: 2025-10-05
+  Changes:
+    - Reduced warm-up time of the Oil rig pump heater.
+  Bugfixes:
+    - Fixed crash when picking up blueprints from inventory.
+    - Removed debug prints from DestroyOilRig().
+---------------------------------------------------------------------------------------------------
 Version: 1.0.25
 Date: 2025-10-05
   Features:
