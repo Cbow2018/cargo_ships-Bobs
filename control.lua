@@ -13,6 +13,7 @@ require("__cargo-ships__/logic/mapgen")
 
 
 is_waterway = util.list_to_map{
+  "waterway",
   "straight-waterway",
   "half-diagonal-waterway",
   "curved-waterway-a",
@@ -22,6 +23,7 @@ is_waterway = util.list_to_map{
 }
 
 is_rail = util.list_to_map{
+  "rail",
   "straight-rail",
   "half-diagonal-rail",
   "curved-rail-a",
@@ -49,7 +51,18 @@ local function OnEntityBuilt(event)
       -- Attempt to revive the waterway ghost
       -- If this fails, then it is waiting for a tile to be deconstructed under it.
       -- A robot will come later and revive it after the tiles are removed (no item required)
-      entity.silent_revive{raise_revive = true}
+      if not entity.silent_revive{raise_revive = true} then
+        -- Waterway could not be revived, add to list to revive later
+        -- look for colliding entities and tile deconstruction markers
+        local found_entities = entity.surface.find_entities_filtered{area=entity.bounding_box, to_be_deconstructed=true}
+        storage.waterway_ghosts = storage.waterway_ghosts or {}
+        for i,e in pairs(found_entities) do
+          script.register_on_object_destroyed(e)
+          local e_num = e.unit_number or 0
+          storage.waterway_ghosts[e_num] = storage.waterway_ghosts[e_num] or {}
+          table.insert(storage.waterway_ghosts[e_num], entity)
+        end
+      end
     elseif entity.ghost_name == "bridge_gate" then
       -- Replace with proper bridge_base ghost
       HandleBridgeGhost(entity)
@@ -211,8 +224,32 @@ end
 -- Each method checks if it applies
 function OnObjectDestroyed(event)
   local unit_number = event.useful_id
+  -- Check if this entity makes space for a waterway ghost
+  if storage.waterway_ghosts and storage.waterway_ghosts[unit_number] then
+    -- try to revive all the waterways referenced in this list
+    local keep_list = {}
+    for _,wg in pairs(storage.waterway_ghosts[unit_number]) do
+      if wg.valid then
+        -- Try to revive this waterway ghost. If it fails, that's fine, we'll try again when a different colliding entity is destroyed.
+        if not wg.silent_revive{raise_revive = true} then
+          if unit_number == 0 then
+            table.insert(keep_list, wg)
+          end
+        end
+      end
+    end
+    if unit_number == 0 then
+      -- tile proxies all have unit_number 0, keep any non-revived ghosts in that list, since we have to keep coming back to it
+      storage.waterway_ghosts[unit_number] = keep_list
+    else
+      -- delete list for entity that doesn't exist anymore, regardless of what we did about it
+      storage.waterway_ghosts[unit_number] = nil
+    end
+  end
+  
   -- Oil Rigs
   if DestroyOilRig(unit_number) then return end
+  
   -- Bridges
   if HandleBridgeDestroyed(unit_number) then return end
 end

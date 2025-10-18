@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.27
+Date: 2025-10-18
+  Bugfixes:
+    - Fixed that waterways super-force-built over landfill would not be revived after the landfill was removed.
+    - Fixed building waterways over fish for real this time, by adding optional dependency on space-exploration.
+    - Fixed that oil rigs could not be built on top of fish when space exploration was installed.
+    - Fixed that pipetting waterways in cheat mode would give actual items instead of ghost.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.26
 Date: 2025-10-05
   Changes:

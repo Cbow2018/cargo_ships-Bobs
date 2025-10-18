@@ -69,6 +69,10 @@ data.raw["rail-signal"]["buoy"].collision_mask.layers.space_tile = nil
 data.raw["rail-chain-signal"]["chain_buoy"].collision_mask.layers.space_tile = nil
 data.raw["rail-chain-signal"]["invisible-chain-signal"].collision_mask.layers.space_tile = nil
 
+if data.raw["mining-drill"]["oil_rig"] then
+  data.raw["mining-drill"]["oil_rig"].collision_mask.layers.space_tile = nil
+end
+
 -- Ensure player collides with pump
 data:extend{
   {
