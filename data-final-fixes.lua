@@ -119,8 +119,11 @@ if data.raw.resource["offshore-oil"] then
 
   -- Make sure the oil rig can mine deep oil:
   data.raw["mining-drill"]["oil_rig"].resource_categories = {data.raw.resource["offshore-oil"].category}
-  -- Make sure the oil rig can burn crude-oil
-  data.raw.fluid["crude-oil"].fuel_value = data.raw.fluid["crude-oil"].fuel_value or "100MJ"
+  
+  if settings.startup["oil_rigs_require_external_power"].value ~= "enabled" then
+    -- Make sure the oil rig can burn crude-oil
+    data.raw.fluid["crude-oil"].fuel_value = data.raw.fluid["crude-oil"].fuel_value or "20MJ"
+  end
 
   -- Make offshore-oil match crude-oil infinite setting (Krastorio2 compat)
   data.raw.resource["offshore-oil"].infinite = data.raw.resource["crude-oil"].infinite
