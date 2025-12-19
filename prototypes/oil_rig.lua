@@ -223,8 +223,12 @@ local oil_rig_migration = {
 local smoke1shift = util.by_pixel(-85 + 2, -115 + 2)
 local smoke2shift = util.by_pixel(53 + 2, -167 + 2)
 
-local function get_icons(prototype, default_icon_size)
-  return prototype.icons or {{icon=prototype.icon, icon_size=prototype.icon_size or default_icon_size or 64}}
+local function get_icons(prototype)
+  local icons = prototype.icons or {{icon=prototype.icon, icon_size=prototype.icon_size}}
+  for _,icon in pairs(icons) do
+    icon.icon_size = icon.icon_size or 64
+  end
+  return icons
 end
 local icon_inputs = {tint={0.4,0.4,1}, scale=0.6, shift={7,-7}}
 
