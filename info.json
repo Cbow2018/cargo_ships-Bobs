@@ -1,6 +1,6 @@
 {
   "name": "cargo-ships",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "title": "Cargo Ships",
   "author": "rude_grass",
   "description": "Adds cargo ships, oil tankers, deep sea oil rigs and other ocean based content",
@@ -16,11 +16,5 @@
     "(?) ctgtemp2",
     "? Krastorio2",
     "? space-exploration"
-  ],
-  "package": {
-    "ignore": [
-      "blender/*",
-      "scenarios/*"
-    ]
-  }
+  ]
 }
