@@ -4,33 +4,26 @@ local collision_mask_util = require("__core__/lualib/collision-mask-util")
 data.raw.tile["landfill"].check_collision_with_entities = true
 
 -- Apply Space Age power pole tile settings
-if settings.startup["floating_pole_enabled"].value and mods["space-age"] then
-  local colliding_layers = {}
+if settings.startup["floating_pole_enabled"].value and mods["space-age"] and 
+  ((not settings.startup["floating_pole_fulgora"].value) or (not settings.startup["floating_pole_aquilo"].value)) then
+  
+  data:extend{
+    {
+      type = "collision-layer",
+      name = "offshore_pole",
+    },
+  }
   if not settings.startup["floating_pole_fulgora"].value then
-    data:extend{
-      {
-        type = "collision-layer",
-        name = "oil_ocean_tile",
-      },
-    }
-    data.raw.tile["oil-ocean-shallow"].collision_mask.layers.oil_ocean_tile = true
-    data.raw.tile["oil-ocean-deep"].collision_mask.layers.oil_ocean_tile = true
-    colliding_layers.oil_ocean_tile = true
+    data.raw.tile["oil-ocean-shallow"].collision_mask.layers.offshore_pole = true
+    data.raw.tile["oil-ocean-deep"].collision_mask.layers.offshore_pole = true
   end
   
   if not settings.startup["floating_pole_aquilo"].value then
-    data:extend{
-      {
-        type = "collision-layer",
-        name = "ammoniacal_ocean_tile",
-      },
-    }
-    data.raw.tile["ammoniacal-ocean"].collision_mask.layers.ammoniacal_ocean_tile = true
-    data.raw.tile["ammoniacal-ocean-2"].collision_mask.layers.ammoniacal_ocean_tile = true
-    colliding_layers.ammoniacal_ocean_tile = true
+    data.raw.tile["ammoniacal-ocean"].collision_mask.layers.offshore_pole = true
+    data.raw.tile["ammoniacal-ocean-2"].collision_mask.layers.offshore_pole = true
   end
   
-  data.raw["electric-pole"]["floating-electric-pole"].tile_buildability_rules[1].colliding_tiles = {layers=colliding_layers}
+  data.raw["electric-pole"]["floating-electric-pole"].tile_buildability_rules[1].colliding_tiles = {layers={offshore_pole=true}}
 end
 
 -- Change inserters to not catch fish when waiting for ships
