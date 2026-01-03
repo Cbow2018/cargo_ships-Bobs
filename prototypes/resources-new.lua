@@ -107,7 +107,7 @@ if mods["angelspetrochem"] then
     {
       {
         type = "fluid",
-        name = "liquid-multi-phase-oil",
+        name = "angels-liquid-multi-phase-oil",
         amount_min = 10,
         amount_max = 10,
         probability = 1
