@@ -231,7 +231,7 @@ function OnTrainCreated(event)
     local engine = parts[1]
     -- Connect engine in the direction of the expected ship body
     local connected = engine.connect_rolling_stock(storage.ship_engines[engine.name].coupled_ship)
-    --game.print("Tried connecting lonely "..engine.name.." at "..util.positiontostr(engine.position)..", result: "..tostring(connected))
+    log("Tried connecting lonely "..engine.name.." at "..util.positiontostr(engine.position)..", result: "..tostring(connected))
 
   -- else if ship has been overconnected, split again
   elseif #parts > 2 then

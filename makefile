@@ -27,7 +27,7 @@ build:
         --exclude tmp.lua                   \
         --exclude temp
 	@cd ./build; zip -r9q modfile.zip *
-	@mv `pwd`/build/modfile.zip `pwd`/$(MOD_NAME)_$(MOD_VERSION).zip
+	@mv `pwd`/build/modfile.zip `pwd`/../$(MOD_NAME)_$(MOD_VERSION).zip
 	@echo "It's ready"
 
 clean:

@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.30
+Date: 2026-01-25
+  Bugfixes:
+    - Fixed that the Oil Rig Generator did not scale consumption with output.
+    - Fixed that the Oil Rig Generator would consume crude oil even when the generator is disabled by settings.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.29
 Date: 2026-01-04
   Bugfixes:

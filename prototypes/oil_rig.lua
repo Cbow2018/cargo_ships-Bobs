@@ -244,6 +244,8 @@ local or_power_electric = {
   max_health = oil_rig.max_health,
   effectivity = 5,
   fluid_usage_per_tick = 0.1,
+  destroy_non_fuel_fluid = false,
+  scale_fluid_usage = true,
   maximum_temperature = 25,
   burns_fluid = true,
   icon_draw_specification = {scale=0},
@@ -317,6 +319,7 @@ if external_power == "disabled" then
 elseif external_power == "enabled" then
   or_power_electric.max_power_output = "0kW"
   or_power_electric.energy_source.output_flow_limit = "0kW"
+  or_power_electric.fluid_usage_per_tick = 0
   or_power_electric.fluid_box.volume = 100
 elseif external_power == "only-when-moduled" then
   or_power_electric.max_power_output = "1050kW"  -- 750kW for the rig, 100kW for surrounding pumps, 200kW for heating
