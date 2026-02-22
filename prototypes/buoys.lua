@@ -581,19 +581,15 @@ port.working_sound = nil
 port.factoriopedia_simulation = nil
 
 -- build a new 4 way definition for port
--- show_shadow=false prevents floating circuit box shadows, but wire shadows end nowhere
--- once port shadows are done set show_shadow=true and tweak shadow_offset, should be around (-30, 10) from  main_offset
-circuit_connector_definitions["cargo-ships-port"] = circuit_connector_definitions.create_vector(
+circuit_connector_definitions["port"] = circuit_connector_definitions.create_vector(
   universal_connector_template,
   {
-    { variation = 18, main_offset = util.by_pixel(37, -61), shadow_offset = util.by_pixel(37, -61), show_shadow = false },
-    { variation = 18, main_offset = util.by_pixel(-1.5, -20), shadow_offset = util.by_pixel(-1.5, -20), show_shadow = false },
-    { variation = 18, main_offset = util.by_pixel(-39, -59), shadow_offset = util.by_pixel(-39, -59), show_shadow = false },
-    { variation = 18, main_offset = util.by_pixel(-1.5, -98), shadow_offset = util.by_pixel(-1.5, -98), show_shadow = false }
+    { variation = 26, main_offset = util.by_pixel(30, -45), shadow_offset = util.by_pixel(72, 1), show_shadow = true },
+    { variation = 26, main_offset = util.by_pixel(0, -15), shadow_offset = util.by_pixel(45, 30), show_shadow = true },
+    { variation = 26, main_offset = util.by_pixel(-30, -45), shadow_offset = util.by_pixel(12, 0), show_shadow = true },
+    { variation = 26, main_offset = util.by_pixel(0, -75), shadow_offset = util.by_pixel(45, -30), show_shadow = true }
   }
 )
--- let factorio generate sprite connector offset per wire from definition
-port.circuit_wire_connection_points = circuit_connector_definitions["cargo-ships-port"].points
-port.circuit_connector_sprites = circuit_connector_definitions["cargo-ships-port"].sprites
+port.circuit_connector = circuit_connector_definitions["port"]
 
 data:extend({buoy, chain_buoy, port})
