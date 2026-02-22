@@ -34,6 +34,7 @@ Create a network of ships, similar to trains, but slower, bulkier, with integrat
  - schnurrebutz/rudegrass | Creator
  - snouz | improved graphics and sound in 0.1
  - robot256 | features, bugfixes, improvements in 0.1
+ - Jurgy | improved boat graphics
  - Contributions bits by | Optera, drivelikebrazil, kajacx, Oceanel51, mkaito, Arcani_Victus, phoenixuprising, Schallfalke, MatrixN1, Zetabite (might be more!)
 
 ## Locale
