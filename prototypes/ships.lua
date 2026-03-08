@@ -108,65 +108,119 @@ local function loopboatanimstripes(name, frame1, framelast)
   return stripes
 end
 
+local boat_def_main = require(GRAPHICSPATH .. "entity/boat/main")
+local boat_def_shadow = require(GRAPHICSPATH .. "entity/boat/shadow")
+local boat_def_tint = require(GRAPHICSPATH .. "entity/boat/tint")
 local indep_boat_animation = {
   layers = {
     {
       priority = "low",
-      width = 536,
-      height = 536,
-      direction_count = 256,
-      stripes = loopboatanimstripes(GRAPHICSPATH .. "entity/boat/boat-", 1, 4),
-      --line_length = 8,
-      --lines_per_file = 8,
-      shift = util.by_pixel(0, 0),
-      scale = 0.5,
+      width = boat_def_main.width,
+      height = boat_def_main.height,
+      direction_count = boat_def_main.sprite_count,
+      shift = boat_def_main.shift,
+      scale = boat_def_main.scale,
       max_advance = 0.2,
+      stripes = {
+        {
+          filename = GRAPHICSPATH .. "entity/boat/main.png",
+          width_in_frames = boat_def_main.line_length,
+          height_in_frames = boat_def_main.lines_per_file,
+        }
+      }
     },
     {
       priority = "low",
-      width = 536,
-      height = 536,
-      direction_count = 256,
-      --filenames = imageloop(GRAPHICSPATH .. "entity/boat/boat_shadow_", 256),
-
-      stripes = loopboatanimstripes(GRAPHICSPATH .. "entity/boat/boat-shadow-", 1, 4),
-      --line_length = 8,
-      --lines_per_file = 8,
-      shift = util.by_pixel(0, 0),
-      scale = 0.5,
-      max_advance = 0.2,
+      width = boat_def_shadow.width,
+      height = boat_def_shadow.height,
+      direction_count = boat_def_shadow.sprite_count,
+      shift = boat_def_shadow.shift,
+      scale = boat_def_shadow.scale,
       draw_as_shadow = true,
+      max_advance = 0.2,
+      stripes = {
+        {
+          filename = GRAPHICSPATH .. "entity/boat/shadow.png",
+          width_in_frames = boat_def_shadow.line_length,
+          height_in_frames = boat_def_shadow.lines_per_file,
+        }
+      }
     },
+    {
+      priority = "low",
+      width = boat_def_tint.width,
+      height = boat_def_tint.height,
+      direction_count = boat_def_tint.sprite_count,
+      shift = boat_def_tint.shift,
+      scale = boat_def_tint.scale,
+      apply_runtime_tint = true,
+      max_advance = 0.2,
+      stripes = {
+        {
+          filename = GRAPHICSPATH .. "entity/boat/tint.png",
+          width_in_frames = boat_def_tint.line_length,
+          height_in_frames = boat_def_tint.lines_per_file,
+        }
+      }
+    }
   }
 }
 
+local boat_def_main = require(GRAPHICSPATH .. "entity/boat/railed/main")
+local boat_def_shadow = require(GRAPHICSPATH .. "entity/boat/railed/shadow")
+local boat_def_tint = require(GRAPHICSPATH .. "entity/boat/railed/tint")
 local boat_pictures = {
   rotated = {
     layers = {
       {
         priority = "low",
-        width = 750,
-        height = 750,
-        direction_count = 256,
-        allow_low_quality_rotation = true,
-        filenames = imageloop(GRAPHICSPATH .. "entity/boat/railed/boat_", 4),
-        line_length = 8,
-        lines_per_file = 8,
-        scale = 0.5, --1.5,
-        shift = util.by_pixel(0, -28),
+        width = boat_def_main.width,
+        height = boat_def_main.height,
+        direction_count = boat_def_main.sprite_count,
+        shift = boat_def_main.shift,
+        scale = boat_def_main.scale,
+        max_advance = 0.2,
+        filenames =
+        {
+          GRAPHICSPATH .. "entity/boat/railed/main-0.png",
+          GRAPHICSPATH .. "entity/boat/railed/main-1.png",
+        },
+        line_length = boat_def_main.line_length,
+        lines_per_file = boat_def_main.lines_per_file,
       },
       {
         priority = "low",
-        width = 750,
-        height = 750,
-        direction_count = 256,
-        allow_low_quality_rotation = true,
-        filenames = imageloop(GRAPHICSPATH .. "entity/boat/railed/boat_shadow_", 4),
-        line_length = 8,
-        lines_per_file = 8,
-        scale = 0.5, --1.5,
-        shift = util.by_pixel(0, -28),
+        width = boat_def_shadow.width,
+        height = boat_def_shadow.height,
+        direction_count = boat_def_shadow.sprite_count,
+        shift = boat_def_shadow.shift,
+        scale = boat_def_shadow.scale,
         draw_as_shadow = true,
+        max_advance = 0.2,
+        filenames =
+        {
+          GRAPHICSPATH .. "entity/boat/railed/shadow-0.png",
+          GRAPHICSPATH .. "entity/boat/railed/shadow-1.png",
+        },
+        line_length = boat_def_shadow.line_length,
+        lines_per_file = boat_def_shadow.lines_per_file,
+      },
+      {
+        priority = "low",
+        width = boat_def_tint.width,
+        height = boat_def_tint.height,
+        direction_count = boat_def_tint.sprite_count,
+        shift = boat_def_tint.shift,
+        scale = boat_def_tint.scale,
+        apply_runtime_tint = true,
+        max_advance = 0.2,
+        filenames =
+        {
+          GRAPHICSPATH .. "entity/boat/railed/tint-0.png",
+          GRAPHICSPATH .. "entity/boat/railed/tint-1.png",
+        },
+        line_length = boat_def_tint.line_length,
+        lines_per_file = boat_def_tint.lines_per_file,
       }
     }
   }

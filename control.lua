@@ -579,6 +579,35 @@ script.on_configuration_changed(function()
   init()
 end)
 
+---@param train LuaTrain
+function CopyLocoColor(train)
+  local locos = train.locomotives.front_movers
+  local loco = locos and locos[1]
+  if not (loco and loco.valid) or loco.name ~= "boat_engine" then
+    return
+  end
+
+  for _, wagon in pairs(train.cargo_wagons) do
+    wagon.color = loco.color
+  end
+end
+
+---@param event EventData.on_train_schedule_changed|EventData.on_train_changed_state 
+function CopyLocoColorEvent(event)
+  CopyLocoColor(event.train)
+end
+
+script.on_event(defines.events.on_train_schedule_changed, CopyLocoColorEvent)
+script.on_event(defines.events.on_train_changed_state, CopyLocoColorEvent)
+script.on_event(defines.events.on_gui_closed, function(event)
+  local entity = event.entity
+  if not (entity and entity.name == "boat_engine") then return end
+  local train = entity.train
+  if not train then return end
+
+  CopyLocoColor(train)
+end)
+
 -- Console commands
 commands.add_command("cargo-ships-dump", "Dump storage to log", function() log(serpent.block(storage)) end)
 

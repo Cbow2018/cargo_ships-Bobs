@@ -170,6 +170,11 @@ function processPlacementQueue()
               cancelPlacement(engine, player)
             else
               --game.print("front is waterway, okay")
+              if entity.name == "boat" then
+                --game.print("Setting color")
+                entity.color = {r=255, g=255, b=0}
+                engine.color = {r=255, g=255, b=0}
+              end
             end
           elseif entity.train.back_end then
             if not is_waterway[entity.train.back_end.rail.name] then
