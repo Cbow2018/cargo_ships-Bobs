@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.31
+Date: 2026-03-08
+  Features:
+    - New HD Boat graphics with color tint! (Huge thanks to Jurgy!)
+  Bugfixes:
+    - Fixed Port circuit connector locations (Thanks to Jurgy)
+---------------------------------------------------------------------------------------------------
 Version: 1.0.30
 Date: 2026-01-25
   Bugfixes:
