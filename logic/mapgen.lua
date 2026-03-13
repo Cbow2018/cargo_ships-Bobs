@@ -41,6 +41,7 @@ end
 local usage_string_get = "Usage: /cargo-ships-get-oil-settings <planet>"
 commands.add_command("cargo-ships-get-oil-settings", "Get oil settings\n" .. usage_string_get, function(command)
   if not command.parameter or (not game.planets[command.parameter] and not game.surfaces[command.parameter]) then
+    game.print("Invalid planet specified.")
     game.print(usage_string_get)
     return
   end
@@ -129,11 +130,23 @@ commands.add_command("cargo-ships-set-oil-settings", "Set oil configuration\n" .
     map_gen_settings.autoplace_controls[control_name] = {frequency = 1, size = 0, richness = 1}
     map_gen_settings.autoplace_settings.entity.settings[resource_name] = {}
   else
+    if not settings_string:match("^{.*}$") then
+      game.print("Error parsing settings: " .. settings_string)
+      game.print(usage_string)
+      return
+    end
     local ok, res = serpent.load(settings_string)
     if not ok then
       game.print("Error parsing settings: " .. settings_string)
+      game.print(usage_string)
       return
     end
+    if  (res.frequency==nil or res.size==nil or res.richness==nil) then
+      game.print("Missing settings table parameters: " .. settings_string)
+      game.print(usage_string)
+      return
+    end
+
     map_gen_settings.autoplace_controls[control_name] = res
     map_gen_settings.autoplace_settings.entity.settings[resource_name] = {}
   end
