@@ -40,30 +40,35 @@ end
 
 local usage_string_get = "Usage: /cargo-ships-get-oil-settings <planet>"
 commands.add_command("cargo-ships-get-oil-settings", "Get oil settings\n" .. usage_string_get, function(command)
-  if not command.parameter or not game.planets[command.parameter] then
+  if not command.parameter or (not game.planets[command.parameter] and not game.surfaces[command.parameter]) then
+    game.print("Invalid planet specified.")
     game.print(usage_string_get)
     return
   end
+  local surface = game.surfaces[command.parameter]
   local planet = game.planets[command.parameter]
-  if not planet.surface then
-    game.print("Planet " .. planet.name .. " has not been generated yet")
-    return
+  if not surface then
+    if not planet.surface then
+      game.print("Planet " .. planet.name .. " has not been generated yet")
+      return
+    end
+    surface = planet.surface
   end
   if not prototypes.entity["offshore-oil"] then
     game.print("Offshore oil has been disabled in mod settings")
-    -- Don't return as may still want to see crude-oil settings
+    -- Don't return as we may still want to see crude-oil settings
   end
   local crude_control_name = "crude-oil"
   local offshore_control_name = "offshore-oil"
-  if planet.name == "aquilo" then
+  if planet and planet.name == "aquilo" then
     crude_control_name = "aquilo_crude_oil"
     offshore_control_name = "aquilo_offshore_oil"
   end
-  local map_gen_settings = planet.surface.map_gen_settings
+  local map_gen_settings = surface.map_gen_settings
   local crude_autoplace_controls = map_gen_settings.autoplace_controls[crude_control_name]
-  game.print(planet.name .. " crude-oil settings: " .. serpent.line(crude_autoplace_controls))
+  game.print(command.parameter .. " crude-oil settings: " .. serpent.line(crude_autoplace_controls))
   local offshore_autoplace_controls = map_gen_settings.autoplace_controls[offshore_control_name]
-  game.print(planet.name .. " offshore-oil settings: " .. serpent.line(offshore_autoplace_controls))
+  game.print(command.parameter .. " offshore-oil settings: " .. serpent.line(offshore_autoplace_controls))
 end)
 
 local usage_string = "Usage: /cargo-ships-set-oil-settings <planet> <offshore-oil/crude-oil> <default/off/{frequency=X,richness=Y,size=Z}>"
@@ -81,15 +86,19 @@ commands.add_command("cargo-ships-set-oil-settings", "Set oil configuration\n" .
   local planet_name = params[1]
   local resource_name = params[2]
   local settings_string = params[3]
-
-  if not game.planets[planet_name] then
-    game.print("Planet " .. planet_name .. " does not exist")
-    return
-  end
+  local surface = game.surfaces[planet_name]
   local planet = game.planets[planet_name]
-  if not planet.surface then
-    game.print("Planet " .. planet_name .. " has not been generated yet")
-    return
+  
+  if not surface then
+    if not planet then
+      game.print("Planet " .. planet_name .. " does not exist")
+      return
+    end
+    if not planet.surface then
+      game.print("Planet " .. planet_name .. " has not been generated yet")
+      return
+    end
+    surface = planet.surface
   end
 
   if resource_name == "offshore-oil" and not prototypes.entity["offshore-oil"] then
@@ -112,27 +121,42 @@ commands.add_command("cargo-ships-set-oil-settings", "Set oil configuration\n" .
     game.print("Unknown resource name: " .. resource_name)
     return
   end
-  local map_gen_settings = planet.surface.map_gen_settings
+  local map_gen_settings = surface.map_gen_settings
 
   if settings_string == "default" then
     map_gen_settings.autoplace_controls[control_name] = {}
+    map_gen_settings.autoplace_settings.entity.settings[resource_name] = {}
   elseif settings_string == "off" then
     map_gen_settings.autoplace_controls[control_name] = {frequency = 1, size = 0, richness = 1}
+    map_gen_settings.autoplace_settings.entity.settings[resource_name] = {}
   else
+    if not settings_string:match("^{.*}$") then
+      game.print("Error parsing settings: " .. settings_string)
+      game.print(usage_string)
+      return
+    end
     local ok, res = serpent.load(settings_string)
     if not ok then
       game.print("Error parsing settings: " .. settings_string)
+      game.print(usage_string)
       return
     end
+    if  (res.frequency==nil or res.size==nil or res.richness==nil) then
+      game.print("Missing settings table parameters: " .. settings_string)
+      game.print(usage_string)
+      return
+    end
+
     map_gen_settings.autoplace_controls[control_name] = res
+    map_gen_settings.autoplace_settings.entity.settings[resource_name] = {}
   end
-  planet.surface.map_gen_settings = map_gen_settings
+  surface.map_gen_settings = map_gen_settings
   --[[local entities = planet.surface.find_entities_filtered{type="resource", name=resource_name}
   for _, entity in pairs(entities) do
     entity.destroy()
   end]]
 
   -- Doesn't delete entities, doesn't create entities if they've already been autoplaced
-  planet.surface.regenerate_entity(resource_name)
+  surface.regenerate_entity(resource_name)
   game.print("Set " .. planet_name .. " " .. resource_name .. " settings to " .. settings_string)
 end)
