@@ -1,10 +1,13 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.31
-Date: 2026-03-08
+Date: 2026-03-12
   Features:
     - New HD Boat graphics with color tint! (Huge thanks to Jurgy!)
+  Changes:
+    - Console commands "cargo-ships-get-oil-settings" and "cargo-ships-set-oil-settings" can also act on surfaces without an associated planet. (Thanks to JoeSchiff)
   Bugfixes:
     - Fixed Port circuit connector locations (Thanks to Jurgy)
+    - Fixed that console command "cargo-ships-set-oil-settings" would treat some invalid strings as "default".
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.30
 Date: 2026-01-25
