@@ -223,6 +223,10 @@ end
 -- Perform the destroyed action for this unit_number
 -- Each method checks if it applies
 function OnObjectDestroyed(event)
+  -- on_object_destroyed can fire for non-entity targets 
+  -- Without this check, useful_id may collide with an oil rig unit_number and trigger unintended destruction
+  if event.type ~= defines.target_type.entity then return end
+
   local unit_number = event.useful_id
   -- Check if this entity makes space for a waterway ghost
   if storage.waterway_ghosts and storage.waterway_ghosts[unit_number] then
