@@ -131,7 +131,7 @@ end
 function HandleOilRigPartGhost(ghost)
   local position = ghost.position
   local rigpos = {math.floor(ghost.position.x*2)/2, math.floor(ghost.position.y*2)/2}
-  if storage.recent_oil_rig and storage.recent_oil_rig.valid and storage.recent_oil_rig.position.x == rigpos.x and storage.recent_oil_rig.position == y then
+  if storage.recent_oil_rig and storage.recent_oil_rig.valid and storage.recent_oil_rig.position.x == rigpos.x and storage.recent_oil_rig.position.y == rigpos.y then
     -- Last function call was for the same oil_rig, we're good
     return
   end
