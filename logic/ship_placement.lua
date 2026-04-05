@@ -47,7 +47,9 @@ end
 local function cancelPlacement(entity, player, robot)
   if not storage.ship_engines[entity.name] then
     if player and player.valid then
-      player.insert{name=entity.name, count=1}
+      local refund_item = entity.prototype.items_to_place_this[1]
+      refund_item.quality = entity.quality
+      player.insert(refund_item)
       if storage.ship_bodies[entity.name] then
         player.create_local_flying_text{text={"cargo-ship-message.error-ship-no-space", entity.localised_name}, create_at_cursor=true}
       else
@@ -55,8 +57,9 @@ local function cancelPlacement(entity, player, robot)
       end
     elseif robot and robot.valid then
       -- Give the robot back the thing
-      local return_item = prototypes.entity[entity.name].items_to_place_this[1]
-      robot.get_inventory(defines.inventory.robot_cargo).insert(return_item)
+      local refund_item = entity.prototype.items_to_place_this[1]
+      refund_item.quality = entity.quality
+      robot.get_inventory(defines.inventory.robot_cargo).insert(refund_item)
       if storage.ship_bodies[entity.name] then
         game.print{"cargo-ship-message.error-ship-no-space", entity.localised_name}
       else

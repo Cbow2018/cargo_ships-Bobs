@@ -4,6 +4,8 @@ Date: 2026-04-05
   Bugfixes:
     - Fixed that Oil Rigs could be randomly deactivated due to object_id collisions. (Thanks to O5MO and Talandar for the fix) 
     - Fixed that Oil Rig ghosts might be mishandled due to typo in code. (Thanks to Talandar)
+    - Fixed crash when ship placement fails if rail-mounted ship entity has different name than the ship item.
+    - Fixed that ship quality would be lost when ship placement on rails failed.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.31
 Date: 2026-03-12
