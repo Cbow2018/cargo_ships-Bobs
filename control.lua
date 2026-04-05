@@ -333,6 +333,7 @@ local function OnPlayerMinedEntity(event)
                            entity.get_connected_rolling_stock(defines.rail_direction.back)
         if otherstock then
           storage.currently_mining[otherstock.unit_number] = entity
+          otherstock.set_driver(nil)  -- Eject player currently in the other stock so it can be mined along with the first one.
           player.mine_entity(otherstock, true)
           -- This mining operation completes before returning
           -- Now merge the undo actions.  Most recent is entity, second-most-recent is otherstock
