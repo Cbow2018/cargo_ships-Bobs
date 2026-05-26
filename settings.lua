@@ -76,6 +76,15 @@ data:extend{
     order = "b-c"
   },
   {
+    type = "int-setting",
+    name = "cargo_ship_capacity",
+    setting_type = "startup",
+    minimum_value = 1,
+    default_value = 1,
+    maximum_value = 100,
+    order = "b-d"
+  },
+  {
     type = "bool-setting",
     name = "no_catching_fish",
     setting_type = "startup",
