@@ -72,7 +72,7 @@ data:extend{
     setting_type = "startup",
     minimum_value = 100,
     default_value = 250,
-    maximum_value = 500,
+    maximum_value = 7000,
     order = "b-c"
   },
   {
