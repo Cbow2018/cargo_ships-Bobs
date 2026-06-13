@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.33
+Date: 2026-06-13
+  Changes:
+    - Added setting to change the Cargo Ship inventory size.
+    - Updated translations from Crowdin.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.32
 Date: 2026-04-05
   Bugfixes:
