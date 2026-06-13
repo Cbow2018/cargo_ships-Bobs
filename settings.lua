@@ -79,9 +79,9 @@ data:extend{
     type = "int-setting",
     name = "cargo_ship_capacity",
     setting_type = "startup",
-    minimum_value = 40,
+    minimum_value = 1,
     default_value = 1000,
-    maximum_value = 20000,
+    maximum_value = 65536,
     order = "b-d"
   },
   {
