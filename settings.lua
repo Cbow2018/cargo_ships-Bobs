@@ -81,7 +81,7 @@ data:extend{
     setting_type = "startup",
     minimum_value = 1,
     default_value = 1000,
-    maximum_value = 65536,
+    maximum_value = 65535,
     order = "b-d"
   },
   {
