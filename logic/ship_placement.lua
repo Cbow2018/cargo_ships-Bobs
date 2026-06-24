@@ -95,7 +95,7 @@ function CheckBoatPlacement(entity, player, robot)
     local quality = entity.quality
     local ship_loc = localizeEngine(entity, ship_name)
     entity.destroy()
-    local ship = surface.create_entity{name=ship_name, quality=quality, position=boat_pos, direction=ship_loc.dir, force=force}
+    local ship = surface.create_entity{name=ship_name, quality=quality, position=boat_pos, direction=ship_loc.dir, force=force, auto_connect=false}
     if ship then
       if player then
         player.create_local_flying_text{text={"cargo-ship-message.place-on-waterway", local_name}, create_at_cursor=true}
