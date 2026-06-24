@@ -73,10 +73,18 @@ data:extend{
     name = "pump",
   },
 }
-local pump = data.raw["pump"]["pump"]
-local pump_collision_mask = collision_mask_util.get_mask(pump)
-pump_collision_mask.layers["pump"] = true
-pump.collision_mask = pump_collision_mask
+local loading_pump = data.raw["pump"]["ship_loading_pump"]
+local loading_pump_collision_mask = loading_pump.collision_mask
+loading_pump_collision_mask.layers["pump"] = true
+loading_pump.collision_mask = loading_pump_collision_mask
+
+
+local unloading_pump = data.raw["pump"]["ship_unloading_pump"]
+local unloading_pump_collision_mask = unloading_pump.collision_mask
+unloading_pump_collision_mask.layers["pump"] = true
+unloading_pump.collision_mask = unloading_pump_collision_mask
+
+
 for _, character in pairs(data.raw.character) do
   local collision_mask = collision_mask_util.get_mask(character)
   if collision_mask.layers["player"] then
@@ -85,12 +93,6 @@ for _, character in pairs(data.raw.character) do
   end
 end
 
--- Compatibility for pump upgrade mods
-for _, other_pump in pairs(data.raw.pump) do
-  if other_pump.fast_replaceable_group == pump.fast_replaceable_group then
-    other_pump.collision_mask = table.deepcopy(pump.collision_mask)
-  end
-end
 
 -----------------------------
 ---- DEEP OIL GENERATION ----

@@ -683,6 +683,13 @@ oil_tanker.selected_minimap_representation = {
 }
 oil_tanker.factoriopedia_simulation = nil
 oil_tanker.corpse = nil
+oil_tanker.tank_count = 6
+oil_tanker.tank_spacing = 2.32
+oil_tanker.valve_to_valve_offset_when_horizontal = {2.32, 0}
+oil_tanker.valve_to_valve_offset_when_vertical = {0, 2.22}
+oil_tanker.base_valve_z_offset_projected_when_horizontal = -1.8
+oil_tanker.base_valve_z_offset_projected_when_vertical = -1.75
+oil_tanker.connection_category = "ship_pump"
 
 ----------------------------------------------------------------
 ------------------------ CARGO SHIP ENGINE ---------------------

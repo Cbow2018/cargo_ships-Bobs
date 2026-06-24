@@ -4,7 +4,6 @@ require("__cargo-ships__/logic/ship_placement")
 require("__cargo-ships__/logic/rail_placement")
 require("__cargo-ships__/logic/long_reach")
 require("__cargo-ships__/logic/bridge_logic")
-require("__cargo-ships__/logic/pump_placement")
 require("__cargo-ships__/logic/blueprint_logic")
 require("__cargo-ships__/logic/ship_enter")
 require("__cargo-ships__/logic/oil_rig_logic")
@@ -380,7 +379,6 @@ end
 
 local function OnStackChanged(event)
   increaseReach(event)
-  PumpVisualisation(event)
 end
 
 -- Register conditional events based on mod settting
@@ -487,9 +485,6 @@ function init_events()
   -- bridge queue
   RegisterBridgeNthTick()
   
-  -- update visuals
-  RegisterVisualsNthTick()
-  
   -- long reach
   script.on_event(defines.events.on_player_cursor_stack_changed, OnStackChanged)
   script.on_event(defines.events.on_pre_player_died, deadReach)
@@ -542,8 +537,8 @@ local function init()
   storage.oil_rigs = storage.oil_rigs or {}
   storage.bridges = storage.bridges or {}
   storage.bridge_destroyed_queue = storage.bridge_destroyed_queue or {}
-  storage.ship_pump_selected = storage.ship_pump_selected or {}
-  storage.pump_markers = storage.pump_markers or {}
+  storage.ship_pump_selected = nil -- Obsolete, delete for migration's sake
+  storage.pump_markers = nil -- Obsolete, delete for migration's sake
   storage.disable_this_tick = storage.disable_this_tick or {}
   storage.driving_state_locks = storage.driving_state_locks or {}
   storage.currently_mining = storage.currently_mining or {}
