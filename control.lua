@@ -505,6 +505,10 @@ function init_events()
   -- rolling stock connection handling
   script.on_event(defines.events.on_train_created, OnTrainCreated)
 
+  -- Oil rig tank de-rotation
+  script.on_event({defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity}, CorrectOilRigTankRotation)
+
+  -- Mod setting change propagation
   script.on_event(defines.events.on_runtime_mod_setting_changed, OnModSettingsChanged)
 
   -- custom-input and shortcut button

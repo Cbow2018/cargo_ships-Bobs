@@ -104,7 +104,7 @@ local oil_rig = {
   type = "mining-drill",
   name = "oil_rig",
   icons = {{icon=GRAPHICSPATH .. "icons/oil_rig.png", icon_size= 64}},
-  flags = {"placeable-neutral", "player-creation", "not-rotatable"},
+  flags = {"placeable-neutral", "player-creation"},
   minable = {mining_time = 1.5, result = "oil_rig"},
   resource_categories = {"offshore-fluid"},
   max_health = 1000,
@@ -170,7 +170,8 @@ local oil_rig = {
   },
 
   circuit_connector = circuit_connector_definitions["oil_rig"],
-  circuit_wire_max_distance = default_circuit_wire_max_distance
+  circuit_wire_max_distance = default_circuit_wire_max_distance,
+  rotated_sound = data.raw["utility-sounds"]["default"]["cannot_build"],
 }
 
 
@@ -339,7 +340,7 @@ or_pole = {
   name = "or_pole",
   icons = util.combine_icons(oil_rig.icons, get_icons(data.raw["electric-pole"]["medium-electric-pole"]),
                                   icon_inputs),
-  flags = {"not-deconstructable", "placeable-neutral", "player-creation", "not-rotatable", "placeable-off-grid"},
+  flags = {"not-deconstructable", "placeable-neutral", "player-creation", "placeable-off-grid"},
   hidden = true,
   max_health = oil_rig.max_health,
   collision_mask = {layers={}},
@@ -477,7 +478,7 @@ local or_tank =
   icons = util.combine_icons( oil_rig.icons, get_icons(data.raw["storage-tank"]["storage-tank"]),
                               icon_inputs),
   max_health = oil_rig.max_health,
-  flags = {"not-deconstructable", "placeable-neutral", "player-creation", "not-rotatable"},
+  flags = {"not-deconstructable", "placeable-neutral", "player-creation"},
   hidden = true,
   selectable_in_game = true,
   allow_copy_paste = true,
@@ -564,6 +565,7 @@ local or_tank =
   circuit_connector = circuit_connector_definitions["or_tank"],
   circuit_wire_max_distance = default_circuit_wire_max_distance,
   default_fluid_temperature_signal = {type = "virtual", name = "signal-T"},
+  rotated_sound = data.raw["utility-sounds"]["default"]["cannot_build"],
 }
 
 

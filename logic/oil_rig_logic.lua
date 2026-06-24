@@ -15,6 +15,10 @@ function CreateOilRig(entity, player, robot)
   local position = entity.position
   local quality = entity.quality
   
+  -- Fix the orientation of the oil_rig when we create it, since blueprint might be rotated
+  entity.mirroring = false
+  entity.direction = defines.direction.north
+  
   -- Create component entities or revive ghosts
   local power = surface.create_entity{name="or_power_electric", quality=quality, position=position, force=force, create_build_effect_smoke=false}
   local radar = surface.create_entity{name="or_radar", quality=quality, position=position, force=force, create_build_effect_smoke=false}
@@ -42,6 +46,8 @@ function CreateOilRig(entity, player, robot)
   if tank_ghost then
     dummy,tank = tank_ghost.silent_revive()
     tank.teleport(position)
+    tank.mirroring = false
+    tank.direction = defines.direction.north
   end
   if not tank then
     tank = surface.create_entity{name = "or_tank", quality=quality, position = entity.position, force = entity.force, create_build_effect_smoke=false}
@@ -179,3 +185,11 @@ function MigrateOilRigReactors()
     end
   end
 end
+
+function CorrectOilRigTankRotation(event)
+  if event.entity and event.entity.valid and (event.entity.name == "or_tank" or event.entity.name == "oil_rig") then
+    event.entity.direction = defines.direction.north
+    event.entity.mirroring = false
+  end
+end
+
