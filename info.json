@@ -1,13 +1,13 @@
 {
   "name": "cargo-ships",
-  "version": "1.0.33",
+  "version": "1.1.0",
   "title": "Cargo Ships",
   "author": "rude_grass",
   "description": "Adds cargo ships, oil tankers, deep sea oil rigs and other ocean based content",
-  "factorio_version": "2.0",
+  "factorio_version": "2.1",
   "dependencies": [
-    "base >= 2.0.67",
-    "cargo-ships-graphics >= 1.0.5",
+    "base",
+    "cargo-ships-graphics",
     "(?) factorio-world",
     "(?) SeaBlock",
     "(?) Hovercrafts",

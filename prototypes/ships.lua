@@ -370,11 +370,11 @@ indep_boat.max_health = 600
 indep_boat.icon = GRAPHICSPATH .. "icons/boat.png"
 indep_boat.icon_size = 64
 indep_boat.guns = nil
-indep_boat.braking_power = "150kW"
+indep_boat.braking_force = (150 * 1000) / 60
 indep_boat.weight = 10000
 indep_boat.max_health = 1500
 indep_boat.consumption = indep_boat_power.."kW"
-indep_boat.friction = 0.002/speed_modifier
+indep_boat.friction_force = 0.002/speed_modifier
 indep_boat.terrain_friction_modifier = 0
 indep_boat.minable = {mining_time = 1, result = "boat"}
 indep_boat.rotation_speed = 0.008

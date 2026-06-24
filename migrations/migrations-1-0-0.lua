@@ -275,10 +275,10 @@ if settings.startup["offshore_oil_enabled"].value then
         radar.destructible = false
         tank.destructible = false
         -- Link pumpjack and generator to tank
-        entity.fluidbox.add_linked_connection(1, tank, 1)
-        power.fluidbox.add_linked_connection(1, tank, 2)
+        entity.add_fluid_box_linked_connection(1, tank, 1)
+        power.add_fluid_box_linked_connection(1, tank, 2)
         -- Prime the energy generator with some oil
-        power.insert_fluid{name="crude-oil", amount=power.fluidbox.get_capacity(1)}
+        power.insert_fluid{name="crude-oil", amount=power.get_fluid_capacity(1)}
         -- Migrate stored oil to storage tank
         if oil_contents > 0 then
           local saved_contents = tank.insert_fluid{name="crude-oil", amount=oil_contents}

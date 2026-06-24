@@ -3,9 +3,9 @@
 local count = 0
 for _, surface in pairs(game.surfaces) do
   for _, entity in pairs(surface.find_entities_filtered{name="legacy-straight-waterway"}) do
-    if not entity.minable then
+    if not entity.minable_flag then
       count = count + 1
-      entity.minable = true
+      entity.minable_flag = true
     end
   end
 end

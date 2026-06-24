@@ -502,7 +502,7 @@ function init_events()
                    defines.events.on_player_configured_blueprint}, HandleBridgeBlueprint)
   
 
-  -- rolling stock connect (this logic was too buggy to use)
+  -- rolling stock connection handling
   script.on_event(defines.events.on_train_created, OnTrainCreated)
 
   script.on_event(defines.events.on_runtime_mod_setting_changed, OnModSettingsChanged)

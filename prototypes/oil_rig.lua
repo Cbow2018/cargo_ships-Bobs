@@ -19,6 +19,87 @@ circuit_connector_definitions["oil_rig"] = circuit_connector_definitions.create_
   }
 )
 
+local oil_rig_graphics_set = 
+{
+  animation =
+  {
+    north =
+    {
+      layers =
+      {
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-n.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          frames = 1,
+          repeat_count = 20,
+          animation_speed = 0.25,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-e.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-s.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-w.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base-shadow.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          draw_as_shadow = true,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base-light.png",
+          width = 704,
+          height = 896,
+          scale = 0.5,
+          draw_as_light = true,
+          frames = 1,
+          repeat_count = 20,
+        },
+        {
+          filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-anim.png",
+          width = 358,
+          height = 486,
+          scale = 0.5,
+          line_length = 5,
+          frame_count = 20,
+          
+        }
+      }
+    }
+  }
+}
+
 local oil_rig = {
   type = "mining-drill",
   name = "oil_rig",
@@ -64,85 +145,7 @@ local oil_rig = {
     height = 12
   },
   monitor_visualization_tint = {78, 173, 255},
-  base_render_layer = "object",
-  base_picture =
-  {
-    sheets =
-    {
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-n.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-e.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-s.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-pipe-w.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base-shadow.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        draw_as_shadow = true,
-        frames = 1,
-      },
-      {
-        filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-base-light.png",
-        width = 704,
-        height = 896,
-        scale = 0.5,
-        draw_as_light = true,
-        frames = 1,
-      },
-    }
-  },
-  graphics_set =
-  {
-    animation =
-    {
-      north =
-      {
-        layers =
-        {
-          {
-            filename = GRAPHICSPATH .. "entity/oil_rig/hr-oil-rig-anim.png",
-            width = 358,
-            height = 486,
-            scale = 0.5,
-            line_length = 5,
-            frame_count = 20,
-            animation_speed = 0.25,
-          }
-        }
-      }
-    }
-  },
+  graphics_set = oil_rig_graphics_set,
   water_reflection = {
     pictures = {
       filename = GRAPHICSPATH .. "entity/oil_rig/oil-rig-water-reflection.png",
@@ -560,6 +563,7 @@ local or_tank =
   },
   circuit_connector = circuit_connector_definitions["or_tank"],
   circuit_wire_max_distance = default_circuit_wire_max_distance,
+  default_fluid_temperature_signal = {type = "virtual", name = "signal-T"},
 }
 
 

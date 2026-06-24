@@ -73,10 +73,10 @@ function CreateOilRig(entity, player, robot)
   tank.destructible = false
   if reactor then reactor.destructible = false end
   -- Link pumpjack and generator to tank
-  entity.fluidbox.add_linked_connection(1, tank, 1)
-  power.fluidbox.add_linked_connection(1, tank, 2)
+  entity.add_fluid_box_linked_connection(1, tank, 1)
+  power.add_fluid_box_linked_connection(1, tank, 2)
   -- Prime the energy generator with some oil
-  power.insert_fluid{name="crude-oil", amount=power.fluidbox.get_capacity(1)}
+  power.insert_fluid{name="crude-oil", amount=power.get_fluid_capacity(1)}
   local entry = {
       surface = surface,
       position = position,
