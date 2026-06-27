@@ -17,30 +17,30 @@ local function hasCorrectConnectedStock(wagon)
   local train = wagon.train
   local ship_data = storage.ship_bodies[wagon.name]
   if ship_data then
-    -- Look for engine in the correct direction
     local engine = wagon.get_connected_rolling_stock(ship_data.coupled_engine)
     if engine and engine.name == ship_data.engine then
       -- Now make sure the engine is facing the right way
       local engine_data = storage.ship_engines[ship_data.engine]
       if engine_data and engine.get_connected_rolling_stock(engine_data.coupled_ship) == wagon then
-          -- If this is the engine we expect, then we're good
-        return true
+        -- If this is the engine we expect for the given ship, then we're good
+        return true  -- Return true so nothing gets deleted this tick
       end
     end
   end
   local engine_data = storage.ship_engines[wagon.name]
   if engine_data then
-    -- Look for body in front of engine (ship)
+    -- Look for body in the correct direction from the engine
     local ship = wagon.get_connected_rolling_stock(engine_data.coupled_ship)
     -- If this is the engine we expect, then we're good
     if ship and engine_data.compatible_ships[ship.name] then
       local ship_data = storage.ship_bodies[ship.name]
       if ship_data and ship.get_connected_rolling_stock(ship_data.coupled_engine) == engine then
+      if ship_data and ship.get_connected_rolling_stock(ship_data.coupled_engine) == wagon then
         return true
       end
     end
   end
-  --game.print("didn't find matching entity for "..wagon.name.." in train of "..#train.carriages.." wagons")
+  log("didn't find matching entity for "..wagon.name.." in train of "..#train.carriages.." wagons")
   return false
 end
 
