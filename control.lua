@@ -1,4 +1,5 @@
 require("util")
+math2d = require("math2d")
 require("__cargo-ships__/logic/ship_api")
 require("__cargo-ships__/logic/ship_placement")
 require("__cargo-ships__/logic/rail_placement")
@@ -9,6 +10,8 @@ require("__cargo-ships__/logic/ship_enter")
 require("__cargo-ships__/logic/oil_rig_logic")
 require("__cargo-ships__/logic/mapgen")
 --require("__cargo-ships__/logic/crane_logic")
+
+save_restore = require("__Robot256Lib__/script/save_restore")
 
 
 is_waterway = util.list_to_map{
@@ -42,7 +45,7 @@ local function OnEntityBuilt(event)
   local force = entity.force
   local player = (event.player_index and game.players[event.player_index]) or nil
 
-  --log("Event happened:"..serpent.block(event))
+  log("OnEntityBuilt Event happened:"..serpent.block(event))
 
   -- check ghost entities first
   if entity.name == "entity-ghost" then
@@ -94,14 +97,35 @@ local function OnEntityBuilt(event)
           end
         end
         if not engine then
-          --game.print("Creating "..ship_data.engine.." for "..entity.name)
+          log("Creating "..ship_data.engine.." for "..entity.name.." at "..serpent.line(engine_loc.pos))
           engine = surface.create_entity{
             name = ship_data.engine,
             quality = quality,
             position = engine_loc.pos,
             direction = engine_loc.dir,
-            force = force
+            force = force,
+            create_build_effect_smoke = false,
           }
+          -- Check if we just deleted an engine from fast-replacing a ship
+          if engine and storage.fast_replace_cache and storage.fast_replace_cache[game.tick] then
+            for index,cachedata in pairs(storage.fast_replace_cache[game.tick]) do
+              if cachedata.name == ship_data.engine and 
+                 cachedata.force == force and
+                 math2d.position.distance_squared(cachedata.position, engine_loc.pos) < 0.5 and
+                 cachedata.direction == engine_loc.dir then
+                -- Cache is a match, restore parameters after creating the engine
+                log("Restoring cached burner and grid to fast-replaced "..tostring(engine))
+                log(serpent.block(cachedata))
+                save_restore.restoreBurner(engine.burner, cachedata.burner)
+                log(serpent.block(save_restore.saveBurner(engine.burner)))
+                save_restore.restoreGrid(engine.grid, cachedata.grid)
+                --if cachedata.insert_plan or cachedata.removal_plan then
+                --  engine.surface.create_entity{name="item-request-proxy", position=engine.position, force=engine.force, target=engine, modules=cachedata.insert_plan}--, removal_plan=cachedata.removal_plan}
+                --end
+                break
+              end
+            end
+          end
         end
       end
     end
@@ -176,17 +200,20 @@ end
 
 -- delete invisible entities if master entity is destroyed
 local function OnEntityDeleted(event)
+  log("entity deleted happened:"..serpent.block(event))
   local entity = event.entity
   if(entity and entity.valid) then
     if storage.ship_bodies[entity.name] then
       if entity.train then
         if entity.train.back_stock then
           if storage.ship_engines[entity.train.back_stock.name] then
+            log("Destroying back_stock "..tostring(entity.train.back_stock))
             entity.train.back_stock.destroy()
           end
         end
         if entity.train.front_stock then
           if storage.ship_engines[entity.train.front_stock.name] then
+            log("Destroying front_stock "..tostring(entity.train.front_stock))
             entity.train.front_stock.destroy()
           end
         end
@@ -196,11 +223,13 @@ local function OnEntityDeleted(event)
       if entity.train then
         if entity.train.front_stock then
           if storage.ship_bodies[entity.train.front_stock.name] then
+            log("Destroying front_stock "..tostring(entity.train.front_stock))
             entity.train.front_stock.destroy()
           end
         end
         if entity.train.back_stock then
           if storage.ship_bodies[entity.train.back_stock.name]  then
+            log("Destroying back_stock "..tostring(entity.train.back_stock))
             entity.train.back_stock.destroy()
           end
         end
@@ -260,6 +289,7 @@ end
 
 -- Robots can try to mine it, but get sent away with something else if there is still cargo
 local function OnRobotPreMined(event)
+  --log("OnRobotPreMined happened:"..serpent.block(event))
   if(event.entity and event.entity.valid) then
     local entity = event.entity
     if storage.ship_bodies[entity.name] or storage.ship_engines[entity.name] then
@@ -305,6 +335,10 @@ end
 -- Robot mining the actually ship/engine (after both are empty).
 -- If one half of a ship is mined, also mine the other half into the same robot. Only one of them will be the actual item.
 local function OnRobotMinedEntity(event)
+  log("OnRobotMined happened:"..serpent.block(event))
+  if event.robot then
+    log("Robot contents: "..serpent.block(event.robot.get_inventory(defines.inventory.robot_cargo).get_contents()))
+  end
   if event.entity and event.entity.valid then
     local entity = event.entity
     if storage.ship_bodies[entity.name] or storage.ship_engines[entity.name] then
@@ -312,7 +346,73 @@ local function OnRobotMinedEntity(event)
       local otherstock = entity.get_connected_rolling_stock(defines.rail_direction.front) or 
                          entity.get_connected_rolling_stock(defines.rail_direction.back)
       if otherstock then
-        otherstock.mine{inventory=event.robot.get_inventory(defines.inventory.robot_cargo), force=true, raise_destroyed=false, ignore_minable=true}
+        -- If the robot has an item which can be used to upgrade this ship entity, then this is an upgrade operation
+        local do_cache = true
+        local robot_item = ""
+        -- 1. Check if the robot has anything in it
+        local robot_stack = event.robot.get_inventory(defines.inventory.robot_cargo)[1]
+        if not (robot_stack and robot_stack.valid_for_read and robot_stack.count > 0) then
+          do_cache = false
+        else
+          -- Robot contains an item
+          robot_item = robot_stack.name
+          -- Check if item can place existing entity
+          local can_place_entity_with_item = false
+          for _,item in pairs(entity.prototype.items_to_place_this) do
+            if item.name == robot_stack.name then
+              can_place_entity_with_item = true
+              break
+            end
+          end
+          -- Check if item's placement default has the same fast-replace group as existing entity
+          local original_group = event.entity.prototype.fast_replaceable_group
+          local new_group = robot_stack.prototype.place_result and robot_stack.prototype.place_result.fast_replaceable_group
+          local can_fast_replace_entity_with_item = (new_group and new_group == original_group)
+          local new_entity_name = can_fast_replace_entity_with_item and robot_stack.prototype.place_result.name
+          
+          if not (can_place_entity_with_item or can_fast_replace_entity_with_item) then
+            do_cache = false
+          else
+            -- Robot's item can place the existing entity
+            -- Check that the new ship uses the same engine
+            if can_place_entity_with_item or (new_entity_name and storage.ship_bodies[new_entity_name] and storage.ship_bodies[new_entity_name].engine == otherstock.name) then
+              -- The new entity uses the same engine
+              do_cache = true
+            else
+              do_cache = false
+            end
+          end
+        end
+        
+        if do_cache then
+          log("OnRobotMinedEntity detected robot upgrading a ship. Caching data and destroying engine "..tostring(otherstock).." ("..otherstock.quality.name..").")
+          
+          -- Save this invisible locomotive to restore later if we need it in the same tick
+          storage.fast_replace_cache = storage.fast_replace_cache or {}
+          storage.fast_replace_cache[game.tick] = storage.fast_replace_cache[game.tick] or {}
+          
+          --local insert_plan, removal_plan = save_restore.saveItemRequestProxy(otherstock)
+          table.insert(storage.fast_replace_cache[game.tick], 
+            {
+              name = otherstock.name,
+              quality = otherstock.quality.name,
+              position = otherstock.position,
+              orientation = otherstock.orientation,
+              direction = orientation_to_direction(otherstock.orientation),
+              force = otherstock.force,
+              burner = save_restore.saveBurner(otherstock.burner),
+              grid = save_restore.saveGrid(otherstock.grid),
+              --insert_plan = insert_plan,
+              --removal_plan = removal_plan,
+            }
+          )
+            
+          otherstock.destroy()
+          
+        else
+          log("OnRobotMinedEntity did not cache engine "..tostring(otherstock).." ("..otherstock.quality.name.." because it was not compatible with robot's item="..robot_item)
+          otherstock.mine{inventory=event.robot.get_inventory(defines.inventory.robot_cargo), force=true, raise_destroyed=false, ignore_minable=true}
+        end
       end
     end
   end
@@ -321,6 +421,9 @@ end
 -- When the player mines a ship or engine, also make the player mine the coupled entity
 -- Unfortunately the API won't let us combine them into one undo action yet
 local function OnPlayerMinedEntity(event)
+  log("OnPlayerMined happened:"..serpent.block(event))
+  if event.buffer and event.buffer.valid then log("Event buffer: "..serpent.block(event.buffer.get_contents())) end
+  log("Player cursor: "..serpent.line(game.players[event.player_index].cursor_stack))
   local entity = event.entity
   local player = game.players[event.player_index]
   if entity and entity.valid then
@@ -442,6 +545,8 @@ function init_events()
   script.on_event(defines.events.on_robot_pre_mined, OnRobotPreMined, mined_filters)
   script.on_event(defines.events.on_player_mined_entity, OnPlayerMinedEntity, mined_filters)
   script.on_event(defines.events.on_robot_mined_entity , OnRobotMinedEntity, mined_filters)
+  
+  script.on_event(defines.events.on_pre_player_mined_item, function(event) log("OnPrePlayerMinedItem happened:"..serpent.block(event)) end, mined_filters)
   
   script.on_event(defines.events.on_undo_applied, OnUndoApplied)
   script.on_event(defines.events.on_redo_applied, OnUndoApplied)
