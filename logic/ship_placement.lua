@@ -13,10 +13,15 @@ function localizeEngine(entity, ship_name)
   return {pos=eng_pos, dir=eng_dir}
 end
 
+function orientation_to_direction(orientation)
+  return math.floor(orientation * 16 + 0.5)
+end
+
 local function hasCorrectConnectedStock(wagon)
   local train = wagon.train
   local ship_data = storage.ship_bodies[wagon.name]
   if ship_data then
+    -- Look for engine in the correct direction from the ship
     local engine = wagon.get_connected_rolling_stock(ship_data.coupled_engine)
     if engine and engine.name == ship_data.engine then
       -- Now make sure the engine is facing the right way
@@ -34,7 +39,6 @@ local function hasCorrectConnectedStock(wagon)
     -- If this is the engine we expect, then we're good
     if ship and engine_data.compatible_ships[ship.name] then
       local ship_data = storage.ship_bodies[ship.name]
-      if ship_data and ship.get_connected_rolling_stock(ship_data.coupled_engine) == engine then
       if ship_data and ship.get_connected_rolling_stock(ship_data.coupled_engine) == wagon then
         return true
       end
@@ -69,6 +73,7 @@ local function cancelPlacement(entity, player, robot)
       game.print{"cargo-ship-message.error-canceled", entity.localised_name}
     end
   end
+  log("cancelPlacement destroying "..tostring(entity))
   entity.destroy()
 end
 
@@ -94,16 +99,33 @@ function CheckBoatPlacement(entity, player, robot)
     local force = entity.force
     local quality = entity.quality
     local ship_loc = localizeEngine(entity, ship_name)
-    entity.destroy()
-    local ship = surface.create_entity{name=ship_name, quality=quality, position=boat_pos, direction=ship_loc.dir, force=force, auto_connect=false}
+    entity.destroy()  -- This deletes the car entity from undo_item(1)
+    local ship = surface.create_entity{
+                                        name=ship_name,
+                                        quality=quality,
+                                        position=boat_pos,
+                                        direction=ship_loc.dir,
+                                        force=force,
+                                        player=player,
+                                        undo_index=1,
+                                        auto_connect=false
+                                      }
     if ship then
       if player then
+        player.undo_redo_stack.remove_undo_action(1,1)
         player.create_local_flying_text{text={"cargo-ship-message.place-on-waterway", local_name}, create_at_cursor=true}
       else
         game.print{"cargo-ship-message.place-on-waterway", local_name}
       end
       local engine_loc = localizeEngine(ship)  -- Get better position for engine now that boat is on rails
-      local engine = surface.create_entity{name=ship_data.engine, position=engine_loc.pos, direction=engine_loc.dir, force=force}
+      local engine = surface.create_entity{
+                                            name=ship_data.engine,
+                                            quality=ship.quality,
+                                            position=engine_loc.pos,
+                                            direction=engine_loc.dir,
+                                            force=force, player=player,
+                                            undo_index=1
+                                          }
       table.insert(storage.check_placement_queue, {entity=ship, engine=engine, player=player, robot=robot})
       RegisterPlacementOnTick()
     else
@@ -112,6 +134,7 @@ function CheckBoatPlacement(entity, player, robot)
       if player then
         player.insert(refund)
         player.create_local_flying_text{text={"cargo-ship-message.error-place-on-waterway", local_name}, create_at_cursor=true}
+        player.undo_redo_stack.remove_undo_item(1)  -- Remove the now-empty undo item
       else
         if robot then
           robot.get_inventory(defines.inventory.robot_cargo).insert(refund)
@@ -130,8 +153,17 @@ end
 
 -- checks placement of rolling stock, and returns the placed entities to the player if necessary
 function processPlacementQueue()
+  -- First, purge the fast_replace_cache
+  if storage.fast_replace_cache then
+    for index,_ in pairs(storage.fast_replace_cache) do
+      if index ~= game.tick then
+        storage.fast_replace_cache[index] = nil
+      end
+    end
+  end
+  -- Now check placement of ships from the last tick
   --if #storage.check_placement_queue > 0 then
-  --  game.print(tostring(game.tick)..": checking placement "..tostring(#storage.check_placement_queue).." entities")
+  --  log(tostring(game.tick)..": checking placement "..tostring(#storage.check_placement_queue).." entities")
   --end
   for _, entry in pairs(storage.check_placement_queue) do
     local entity = entry.entity
@@ -139,7 +171,7 @@ function processPlacementQueue()
     local player = entry.player
     local robot = entry.robot
     
-    --game.print("checking "..entity.name.." "..tostring(entity.unit_number))
+    --log("checking "..tostring(entity).." "..tostring(entity.unit_number))
 
     if entity and entity.valid then
       if storage.ship_bodies[entity.name] then
@@ -153,11 +185,21 @@ function processPlacementQueue()
             cancelPlacement(entity, player, robot)
           else
             --game.print("Correct stock coupled but wasn't given by creator")
+            -- Ship body would be okay as-is, but check if this is a marked for deconstruction
+            if entity.to_be_deconstructed() then
+              -- Ship is marked, make sure the engine is also marked
+              engine = entity.get_connected_rolling_stock(ship_data.coupled_engine)
+              if engine and engine.valid and not engine.to_be_deconstructed() then
+                log("Check Placement ordering deconstruction of "..tostring(engine))
+                -- Unfortunately, there is no way to add deconstruction orders or mine_entity commands to the undo stack.
+                engine.order_deconstruction(player and player.force or ship.force, player, 1)
+              end
+            end
           end
-        elseif ship_data.engine and entity.orientation ~= engine.orientation then
-          --game.print("engine is wrong orientation")
-          cancelPlacement(entity, player, robot)
-          cancelPlacement(engine, player)
+        --elseif ship_data.engine and entity.orientation ~= engine.orientation then
+        --  game.print("engine is wrong orientation")
+        --  cancelPlacement(entity, player, robot)
+        --  cancelPlacement(engine, player)
         elseif entity.train then
           -- check if connected to too many carriages
           if ((ship_data.engine and #entity.train.carriages > 2) or
@@ -196,6 +238,13 @@ function processPlacementQueue()
         if not hasCorrectConnectedStock(entity) then
           game.print{"cargo-ship-message.error-unlinked-engine", entity.localised_name}
           cancelPlacement(entity, player)
+        elseif entity.to_be_deconstructed() then
+          -- This engine is marked for deconstruction, make sure the attached ship is also
+          local ship = entity.get_connected_rolling_stock(storage.ship_engines[entity.name].coupled_ship)
+          if not ship.to_be_deconstructed() then
+            log("Check Placement ordering deconstruction of "..tostring(ship))
+            ship.order_deconstruction(player and player.force or ship.force, player, 1)
+          end
         end
 
       -- else: trains
@@ -272,6 +321,7 @@ function DestroyShipGhost(ghost)
     radius = 1
   }
   for _,engine_ghost in pairs(engine_ghosts) do
+    log("Destroying engine ghost "..tostring(engine_ghost))
     engine_ghost.destroy()
   end
 
