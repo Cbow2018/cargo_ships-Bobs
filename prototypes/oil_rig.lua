@@ -3,6 +3,10 @@ if not settings.startup["offshore_oil_enabled"].value then return end
 
 local external_power = settings.startup["oil_rigs_require_external_power"].value
 
+
+-- Make collision layers so the oil-rig sub-entities can't be placed on top of each other.
+data:extend{{type="collision-layer", name="or_pole"}, {type="collision-layer", name="or_tank"}}
+
 ----------------------------------------------------------------
 --------------------------- OIL RIG ----------------------------
 ----------------------------------------------------------------
@@ -343,7 +347,7 @@ or_pole = {
   flags = {"not-deconstructable", "placeable-neutral", "player-creation", "placeable-off-grid"},
   hidden = true,
   max_health = oil_rig.max_health,
-  collision_mask = {layers={}},
+  collision_mask = {layers={or_pole=true}},
   collision_box = {{-0.5, -0.5}, {0.5, 0.5}},
   selection_box = {{-0.9, 1.1}, {0.1, 2.1}},
   drawing_box_vertical_extension = 3,
@@ -483,7 +487,7 @@ local or_tank =
   selectable_in_game = true,
   allow_copy_paste = true,
   collision_box = oil_rig.collision_box,
-  collision_mask = {layers = {}},
+  collision_mask = {layers = {or_tank=true}},
   selection_box = or_tank_box,
   selection_priority = 56,
   drawing_box_vertical_extension = 0.5,
