@@ -93,7 +93,7 @@ local function OnEntityBuilt(event)
           dummy, engine = ghost.revive()
           -- If couldn't revive engine, destroy ghost
           if not engine then
-            game.print("couldn't revive ghost at "..util.positiontostr(newghost.position))
+            game.print("couldn't revive ghost at "..util.positiontostr(ghost.position))
             ghost.destroy()
           end
         end
