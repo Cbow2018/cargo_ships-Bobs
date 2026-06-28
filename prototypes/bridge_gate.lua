@@ -43,6 +43,7 @@ bridge.name = "bridge_base"
 bridge.icon = GRAPHICSPATH .. "icons/bridge.png"
 bridge.icon_size = 64
 bridge.localised_description = {"description-template.bridge_base", {"entity-description.bridge_gate"}}
+bridge.minable = {mining_time = 3, result = "bridge_base"}
 bridge.fast_replaceable_group  = nil
 bridge.next_upgrade = nil
 bridge.factoriopedia_simulation = nil

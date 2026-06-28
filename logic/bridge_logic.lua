@@ -64,6 +64,7 @@ function CreateBridge(entity, player, robot)
   local position = entity.position
   local direction = entity.direction
   local force = entity.force
+  local quality = entity.quality
   local ver, hor, x, y
   local surface = entity.surface
   
@@ -80,16 +81,16 @@ function CreateBridge(entity, player, robot)
       conflicts[#conflicts+1] = e
     end
   end
-  if num_waterways > 3 or next(conflicts) then
+  if num_waterways > 3 or table_size(conflicts) > 0 then
     -- Area is not clear, return item to player/robot
     --game.print("Items blocking bridge construction: \n"..serpent.block(conflicts))
     if player and player.valid then
-      player.insert{name=entity.name, count=1}
+      player.insert{name=entity.name, count=1, quality=quality}
       player.create_local_flying_text{text={"cargo-ship-message.error-ship-no-space", entity.localised_name}, create_at_cursor=true}
     elseif robot and robot.valid then
       -- Give the robot back the thing
       local return_item = entity.name
-      robot.get_inventory(defines.inventory.robot_cargo).insert{name=return_item, count=1}
+      robot.get_inventory(defines.inventory.robot_cargo).insert{name=return_item, count=1, quality=quality}
       game.print{"cargo-ship-message.error-ship-no-space", entity.localised_name}
     else
       game.print{"cargo-ship-message.error-canceled", entity.localised_name}
@@ -115,6 +116,7 @@ function CreateBridge(entity, player, robot)
   -- Build bridge
   local bridge = surface.create_entity{
     name = "bridge_gate",
+    quality = quality,
     position = math2d.position.add(position, bridge_defintion.bridge_offset),
     direction = direction,
     force = force
