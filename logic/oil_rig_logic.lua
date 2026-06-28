@@ -34,6 +34,7 @@ function CreateOilRig(entity, player, robot)
   local pole,dummy
   local pole_ghost = surface.find_entities_filtered{ghost_name = "or_pole", position = position, radius = 1, limit = 1}[1]
   if pole_ghost then
+    --game.print("Revived or_pole ghost")
     dummy,pole = pole_ghost.silent_revive()
     pole.teleport(math2d.position.add(position,pole_offset))
   end
@@ -44,6 +45,7 @@ function CreateOilRig(entity, player, robot)
   local tank
   local tank_ghost = surface.find_entities_filtered{ghost_name = "or_tank", position = position, radius = 1, limit = 1}[1]
   if tank_ghost then
+    --game.print("Revived or_tank ghost")
     dummy,tank = tank_ghost.silent_revive()
     tank.teleport(position)
     tank.mirroring = false
@@ -100,20 +102,21 @@ function CreateOilRig(entity, player, robot)
   return entry
 end
 
-function DestroyOilRig(unit_number)
+-- Destroy the oil_rig sub-entities. If player is given, add the pole and tank to their undo stack.
+function DestroyOilRig(unit_number, player, undo_index)
   if storage.oil_rigs and storage.oil_rigs[unit_number] then
     local data = storage.oil_rigs[unit_number]
     if data.pole and data.pole.valid then
-      data.pole.destroy()
+      data.pole.destroy{player=player, undo_index=undo_index}
+    end
+    if data.tank and data.tank.valid then
+      data.tank.destroy{player=player, undo_index=undo_index}
     end
     if data.radar and data.radar.valid then
       data.radar.destroy()
     end
     if data.power and data.power.valid then
       data.power.destroy()
-    end
-    if data.tank and data.tank.valid then
-      data.tank.destroy()
     end
     if data.reactor and data.reactor.valid then
       data.reactor.destroy()
@@ -154,6 +157,7 @@ function HandleOilRigPartGhost(ghost)
     return
   end
   -- No matching recent oil rig and none found, delete ghost
+  game.print("Destroying Unmatched Oil Rig Part Ghost "..tostring(ghost))
   ghost.destroy()
   storage.recent_oil_rig = nil
 end

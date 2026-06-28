@@ -275,6 +275,22 @@ function processPlacementQueue()
             cancelPlacement(entity, player, robot)
           end
         end
+      
+      -- oil_rig part ghosts, make sure there is an oil_rig ghost attached to them
+      elseif entity.type == "entity-ghost" then
+        HandleOilRigPartGhost(entity)
+      
+      -- oil_rig deconstruction orders, add to previous undo item
+      elseif entity.name == "oil_rig" and entity.to_be_deconstructed() then
+        local undo_item = player and player.undo_redo_stack.get_undo_item_count() > 0 and player.undo_redo_stack.get_undo_item(1)
+        if undo_item and undo_item[1] and undo_item[1].type == "removed-entity" and undo_item[1].target.name == "oil_rig" then
+          --game.print("Marking "..tostring(entity).." subentities for deconstruction")
+          local data = storage.oil_rigs and storage.oil_rigs[entity.unit_number]
+          if data then
+            data.pole.order_deconstruction(player and player.force or entity.force, player, 1)
+            data.tank.order_deconstruction(player and player.force or entity.force, player, 1)
+          end
+        end
       end
     end
   end

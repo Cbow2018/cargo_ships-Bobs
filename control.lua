@@ -45,7 +45,7 @@ local function OnEntityBuilt(event)
   local force = entity.force
   local player = (event.player_index and game.players[event.player_index]) or nil
 
-  log("OnEntityBuilt Event happened:"..serpent.block(event))
+  --log("OnEntityBuilt Event happened:"..serpent.block(event))
 
   -- check ghost entities first
   if entity.name == "entity-ghost" then
@@ -70,7 +70,8 @@ local function OnEntityBuilt(event)
       HandleBridgeGhost(entity)
     elseif entity.ghost_name == "or_tank" or entity.ghost_name == "or_pole" then
       -- Delete oil rig parts if placed without an oil_rig
-      HandleOilRigPartGhost(entity)
+      table.insert(storage.check_placement_queue, {entity=entity})
+      RegisterPlacementOnTick()
     end
 
   elseif storage.boat_bodies[entity.name] then
@@ -114,8 +115,8 @@ local function OnEntityBuilt(event)
                  math2d.position.distance_squared(cachedata.position, engine_loc.pos) < 0.5 and
                  cachedata.direction == engine_loc.dir then
                 -- Cache is a match, restore parameters after creating the engine
-                log("Restoring cached burner and grid to fast-replaced "..tostring(engine))
-                log(serpent.block(cachedata))
+                --log("Restoring cached burner and grid to fast-replaced "..tostring(engine))
+                --log(serpent.block(cachedata))
                 save_restore.restoreBurner(engine.burner, cachedata.burner)
                 save_restore.restoreGrid(engine.grid, cachedata.grid)
                 if cachedata.driver then
@@ -161,6 +162,11 @@ local function OnMarkedForDeconstruction(event)
     -- But wait until the next tick after all undo/redo actions have been completed, if that's what caused this marking
     table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
     RegisterPlacementOnTick()
+  elseif entity.name == "oil_rig" then
+    -- Also mark or_tank and or_pole for deconstruction in the same undo item
+    --game.print("Register oil rig deconstruction")
+    table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
+    RegisterPlacementOnTick()
   end
 end
 
@@ -193,7 +199,7 @@ end
 
 -- delete invisible entities if master entity is destroyed
 local function OnEntityDeleted(event)
-  log("entity deleted happened:"..serpent.block(event))
+  --log("entity deleted happened:"..serpent.block(event))
   local entity = event.entity
   if(entity and entity.valid) then
     if storage.ship_bodies[entity.name] then
@@ -273,7 +279,16 @@ function OnObjectDestroyed(event)
   end
   
   -- Oil Rigs
-  if DestroyOilRig(unit_number) then return end
+  local player, undo_index
+  if storage.currently_mining[unit_number] then
+    player = storage.currently_mining[unit_number].player
+    undo_index = storage.currently_mining[unit_number].undo_index
+    storage.currently_mining[unit_number] = nil
+  end
+  if DestroyOilRig(unit_number, player, undo_index) then
+    --log("OnObjectDestroyed happened:"..serpent.block(event))
+    return
+  end
   
   -- Bridges
   if HandleBridgeDestroyed(unit_number) then return end
@@ -465,7 +480,7 @@ local function OnPlayerMinedEntity(event)
           end
           
           if do_cache then
-            log("OnPlayerMinedEntity detected player upgrading a ship. Caching data and destroying engine "..tostring(otherstock).." ("..otherstock.quality.name..").")
+            --log("OnPlayerMinedEntity detected player upgrading a ship. Caching data and destroying engine "..tostring(otherstock).." ("..otherstock.quality.name..").")
             
             -- Save this invisible locomotive to restore later if we need it in the same tick
             storage.fast_replace_cache = storage.fast_replace_cache or {}
@@ -498,6 +513,9 @@ local function OnPlayerMinedEntity(event)
             RegisterPlacementOnTick()
           end
         end
+      elseif entity.name == "oil_rig" then
+        -- Save what player this oil_rig is being mined by so it can be added to their undo stack
+        storage.currently_mining[entity.unit_number] = {player=player, undo_index=1}
       end
     else
       -- This mining operation was started by script, don't start another one and clear the flag
@@ -604,7 +622,7 @@ function init_events()
   script.on_event(defines.events.on_object_destroyed, OnObjectDestroyed)
 
   -- recover fuel from mined ships
-  local mined_filters = {}
+  local mined_filters = {{filter="name", name="oil_rig"}}
   if storage.ship_bodies then
     for name,_ in pairs(storage.ship_bodies) do
       table.insert(mined_filters, {filter="name", name=name})
@@ -631,6 +649,7 @@ function init_events()
     {filter="name", name="curved-waterway-b"},
     {filter="name", name="legacy-straight-waterway"},
     {filter="name", name="legacy-curved-waterway"},
+    {filter="name", name="oil_rig"},
   }
   if storage.ship_bodies then
     for name,_ in pairs(storage.ship_bodies) do
