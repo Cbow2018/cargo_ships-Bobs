@@ -122,9 +122,9 @@ local function OnEntityBuilt(event)
                 if cachedata.driver then
                   engine.set_driver(cachedata.driver)
                 end
-                --if cachedata.insert_plan or cachedata.removal_plan then
-                --  engine.surface.create_entity{name="item-request-proxy", position=engine.position, force=engine.force, target=engine, modules=cachedata.insert_plan}--, removal_plan=cachedata.removal_plan}
-                --end
+                if cachedata.insert_plan or cachedata.removal_plan then
+                  engine.surface.create_entity{name="item-request-proxy", position=engine.position, force=engine.force, target=engine, modules=cachedata.insert_plan, removal_plan=cachedata.removal_plan}
+                end
                 break
               end
             end
@@ -396,8 +396,10 @@ local function OnRobotMinedEntity(event)
           -- Save this invisible locomotive to restore later if we need it in the same tick
           storage.fast_replace_cache = storage.fast_replace_cache or {}
           storage.fast_replace_cache[game.tick] = storage.fast_replace_cache[game.tick] or {}
-          
-          --local insert_plan, removal_plan = save_restore.saveItemRequestProxy(otherstock)
+          log("About to call saveItemRequestProxy")
+          local insert_plan, removal_plan = save_restore.saveItemRequestProxy(otherstock)
+          if insert_plan then log("Insert plan:"..serpent.block(insert_plan)) end
+          if removal_plan then log("Removal plan:"..serpent.block(removal_plan)) end
           table.insert(storage.fast_replace_cache[game.tick], 
             {
               name = otherstock.name,
@@ -409,8 +411,8 @@ local function OnRobotMinedEntity(event)
               burner = save_restore.saveBurner(otherstock.burner),
               grid = save_restore.saveGrid(otherstock.grid),
               driver = otherstock.get_driver(),
-              --insert_plan = insert_plan,
-              --removal_plan = removal_plan,
+              insert_plan = #insert_plan>0 and insert_plan or nil,
+              removal_plan = #removal_plan>0 and removal_plan or nil,
             }
           )
           otherstock.set_driver(nil)
@@ -486,7 +488,11 @@ local function OnPlayerMinedEntity(event)
             storage.fast_replace_cache = storage.fast_replace_cache or {}
             storage.fast_replace_cache[game.tick] = storage.fast_replace_cache[game.tick] or {}
             
-            --local insert_plan, removal_plan = save_restore.saveItemRequestProxy(otherstock)
+            log("About to call saveItemRequestProxy")
+            local insert_plan, removal_plan = save_restore.saveItemRequestProxy(otherstock)
+            if insert_plan then log("Insert plan:"..serpent.block(insert_plan)) end
+            if removal_plan then log("Removal plan:"..serpent.block(removal_plan)) end
+          
             table.insert(storage.fast_replace_cache[game.tick], 
               {
                 name = otherstock.name,
@@ -498,8 +504,8 @@ local function OnPlayerMinedEntity(event)
                 burner = save_restore.saveBurner(otherstock.burner),
                 grid = save_restore.saveGrid(otherstock.grid),
                 driver = otherstock.get_driver(),
-                --insert_plan = insert_plan,
-                --removal_plan = removal_plan,
+                insert_plan = #insert_plan>0 and insert_plan or nil,
+                removal_plan = #removal_plan>0 and removal_plan or nil,
               }
             )
             otherstock.set_driver(nil)
