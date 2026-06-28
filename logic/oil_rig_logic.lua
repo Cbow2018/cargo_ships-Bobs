@@ -167,7 +167,7 @@ end
 function MigrateOilRigReactors()
   if prototypes.entity["or_reactor"] then
     if storage.oil_rigs then
-      log(serpent.block(storage.oil_rigs))
+      --log(serpent.block(storage.oil_rigs))
       for unit_number, rig_data in pairs(storage.oil_rigs) do
         local surface = rig_data.surface
         if surface.planet and surface.planet.prototype.entities_require_heating and not rig_data.reactor then
@@ -175,17 +175,17 @@ function MigrateOilRigReactors()
           log("Added Oil Rig Reactor to oil rig on surface "..surface.name.." at "..util.positiontostr(rig_data.position))
         end
       end
-      log(serpent.block(storage.oil_rigs))
+      --log(serpent.block(storage.oil_rigs))
     end
   else
     -- No more heating, remove dead references to reactors that don't exist
     if storage.oil_rigs then
-      log(serpent.block(storage.oil_rigs))
+      --log(serpent.block(storage.oil_rigs))
       for unit_number, rig_data in pairs(storage.oil_rigs) do
         rig_data.reactor = nil
         log("Removed reactor reference from oil rig")
       end
-      log(serpent.block(storage.oil_rigs))
+      --log(serpent.block(storage.oil_rigs))
     end
   end
 end

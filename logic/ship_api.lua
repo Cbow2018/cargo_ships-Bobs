@@ -224,32 +224,15 @@ function init_ship_globals()
   storage.boat_bodies = {}
   storage.enter_ship_entities = {}
   
-  -- Create the built-in ships and boat
-  add_ship({
-    name = "cargo_ship",
-    engine = "cargo_ship_engine",
-    engine_scale = 1,
-    engine_at_front = false,
-  })
-
-  add_ship({
-    name = "oil_tanker",
-    engine = "cargo_ship_engine",
-    engine_scale = 1,
-    engine_at_front = false,
-  })
-
-  add_ship({
-    name = "boat",
-    engine = "boat_engine",
-    engine_scale = 0.3,
-    engine_at_front = true,
-  })
-
-  add_boat({
-    name = "indep-boat",
-    rail_version = "boat",
-  })
+  -- Read the Ship Data out of Mod Data
+  for name,data in pairs(prototypes.mod_data) do
+    if data.data_type == "cargo-ships.ship-definition" then
+      add_ship(data.data)
+    elseif data.data_type == "cargo-ships.boat-definition" then
+      add_boat(data.data)
+    end
+  end
+  
   -- List ship engines 
   log("Ship Engines Defined:")
   for _,eng in pairs(storage.ship_engines) do
@@ -260,18 +243,3 @@ function init_ship_globals()
   log("Enterable ships:\n"..serpent.line(storage.enter_ship_entities))
 end
 
-
-remote.add_interface("cargo-ships", {
-
-    add_ship = function(params)
-      add_ship(params)
-      init_events()
-    end,
-
-    add_boat = function(params)
-      add_boat(params)
-      init_events()
-    end,
-
-  }
-)
