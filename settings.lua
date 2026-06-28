@@ -1,13 +1,6 @@
 data:extend{
   {
     type = "bool-setting",
-    name = "floating_pole_enabled",
-    setting_type = "startup",
-    default_value = true,
-    order = "a-a"
-  },
-  {
-    type = "bool-setting",
     name = "offshore_oil_enabled",
     setting_type = "startup",
     default_value = true,
@@ -115,22 +108,3 @@ data:extend{
     order = "c-d"
   }
 }
-
-if mods["space-age"] then
-  data:extend{
-    {
-      type = "bool-setting",
-      name = "floating_pole_fulgora",
-      setting_type = "startup",
-      default_value = false,
-      order = "a-ab"
-    },
-    {
-      type = "bool-setting",
-      name = "floating_pole_aquilo",
-      setting_type = "startup",
-      default_value = false,
-      order = "a-ac"
-    },
-  }
-end

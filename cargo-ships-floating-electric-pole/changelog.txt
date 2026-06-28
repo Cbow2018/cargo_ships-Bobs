@@ -1,0 +1,10 @@
+---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+Date: 2026-06-28
+  Features:
+    - Updated for Factorio 2.1.
+    - Refactored the Cargo Ships Floating Power Pole into a standalone mod.
+    - This makes it easy for players to enable and disable it in the mod portal.
+    - It also allows players to use the Floating Power Pole without the rest of the Cargo Ships content.
+  Changes:
+    - Floating power pole may be manufactured in the Space Age Electromagnetics facility.

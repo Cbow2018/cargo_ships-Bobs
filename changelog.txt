@@ -1,5 +1,5 @@
 ---------------------------------------------------------------------------------------------------
-Version: 2.0.0
+Version: 2.1.0
 Date: 2026-06-28
   Features:
     - Updated for Factorio 2.1.
@@ -9,7 +9,7 @@ Date: 2026-06-28
     - Ships may be fast-replaced and upgraded by robots with the new 2.1 feature.
   Changes:
     - The runtime API to add ships and boats has been replaced with a Mod Data format.  See the example in prototypes/ship-definitions.lua.
-    - Floating electric pole may be manufactured in the Space Age Electromagnetics facility.
+    - The Floating electric pole has been moved to a separate mod.
   Bugfixes:
     - Fixed many, many inconsistencies when using undo and redo with ships and oil rigs.
     - Fixed that the Bridge item said it would produce a Port item when mined.

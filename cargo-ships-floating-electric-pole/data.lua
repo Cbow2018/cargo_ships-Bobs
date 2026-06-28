@@ -1,12 +1,12 @@
 local collision_mask_util = require("__core__/lualib/collision-mask-util")
 
-if not settings.startup["floating_pole_enabled"].value then return end
+local GRAPHICSPATH = "__cargo-ships-floating-electric-pole__/graphics/"
 
 data:extend{
   {
     type = "item",
     name = "floating-electric-pole",
-    icon = GRAPHICSPATH .. "icons/floating_pole.png",
+    icon = GRAPHICSPATH .. "icons/floating-electric-pole.png",
     icon_size = 64,
     flags = {},
     subgroup = "energy-pipe-distribution",
@@ -37,7 +37,7 @@ data:extend{
         recipe = "floating-electric-pole"
       }
     },
-    prerequisites = {"water_transport", "electric-energy-distribution-1"},
+    prerequisites = {"electric-energy-distribution-1"},
     unit = {
       count = 120,
       ingredients = {
@@ -53,7 +53,7 @@ data:extend{
 
 local floating_pole = table.deepcopy(data.raw["electric-pole"]["big-electric-pole"])
 floating_pole.name = "floating-electric-pole"
-floating_pole.icon = GRAPHICSPATH .. "icons/floating_pole.png"
+floating_pole.icon = GRAPHICSPATH .. "icons/floating-electric-pole.png"
 floating_pole.icon_size = 64
 floating_pole.minable = {mining_time = 0.5, result = "floating-electric-pole"}
 for layer,_ in pairs(data.raw.tile.water.collision_mask.layers) do
@@ -67,7 +67,7 @@ floating_pole.next_upgrade = nil
 floating_pole.pictures = {
   layers = {
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/hr-floating-electric-pole.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/hr-floating-electric-pole.png",
       priority = "high",
       width = 336,
       height = 330,
@@ -76,7 +76,7 @@ floating_pole.pictures = {
       shift = util.by_pixel(51, -58),
     },
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/hr-floating-electric-pole-shadows.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/hr-floating-electric-pole-shadows.png",
       priority = "high",
       width = 336,
       height = 330,
@@ -90,14 +90,14 @@ floating_pole.pictures = {
 floating_pole.water_reflection = {
   pictures = {
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/floating-electric-pole_water_reflection.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/floating-electric-pole_water_reflection.png",
       width = 34,
       height = 33,
       shift = util.by_pixel(0, 58),
       scale = 5
     },
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/floating-electric-pole_water_reflection.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/floating-electric-pole_water_reflection.png",
       width = 34,
       height = 33,
       x = 34,
@@ -105,7 +105,7 @@ floating_pole.water_reflection = {
       scale = 5
     },
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/floating-electric-pole_water_reflection.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/floating-electric-pole_water_reflection.png",
       width = 34,
       height = 33,
       x = 68,
@@ -113,7 +113,7 @@ floating_pole.water_reflection = {
       scale = 5
     },
     {
-      filename = GRAPHICSPATH .. "entity/floating_electric_pole/floating-electric-pole_water_reflection.png",
+      filename = GRAPHICSPATH .. "entity/floating-electric-pole/floating-electric-pole_water_reflection.png",
       width = 34,
       height = 33,
       x = 102,

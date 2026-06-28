@@ -1,0 +1,11 @@
+{
+  "name": "cargo-ships-floating-electric-pole",
+  "version": "2.1.0",
+  "title": "Cargo Ships: Floating Electric Pole",
+  "author": "rude_grass",
+  "description": "Adds large electric poles that are placed on water",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "base"
+  ]
+}

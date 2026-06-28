@@ -1,13 +1,14 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.1.0
-Date: 2026-TBD
+Version: 2.1.0
+Date: 2026-06-28
   Changes:
-    - Version bump for Factorio 2.1.
+    - Updated for Factorio 2.1.
+    - Refactored Floating Electric Pole graphics into its own mod.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
-Date: 2026-03-08
-  Changes:
-    - NEW HD BOAT GRAPHICS with tint layer. HUGE Thanks to Jurgy!
+Date: 2026-03-12
+  Features:
+    - New HD Boat graphics with color tint! (Huge thanks to Jurgy!)
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.4
 Date: 2024-11-19
