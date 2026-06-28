@@ -25,8 +25,8 @@ end
 
 local pump = data.raw["pump"]["pump"]
 local loading_pump = table.deepcopy(data.raw["pump"]["pump"])
-loading_pump.name = "ship_loading_pump"
-loading_pump.minable = {mining_time = 0.2, result = "ship_loading_pump"}
+loading_pump.name = "ship-loading-pump"
+loading_pump.minable = {mining_time = 0.2, result = "ship-loading-pump"}
 
 -- Change collision mask so that it can be placed on water
 loading_pump.collision_mask = collision_mask_util.get_default_mask("pump")
@@ -112,8 +112,8 @@ end
 
 
 local unloading_pump = table.deepcopy(loading_pump)
-unloading_pump.name = "ship_unloading_pump"
-unloading_pump.minable = {mining_time = 0.2, result = "ship_unloading_pump"}
+unloading_pump.name = "ship-unloading-pump"
+unloading_pump.minable = {mining_time = 0.2, result = "ship-unloading-pump"}
 
 unloading_pump.fluid_box.pipe_connections =
   {
@@ -144,20 +144,20 @@ shift_animation4way(offset_rotated, unloading_pump.wagon_connection_graphics.bas
 
 
 local loading_pump_item = table.deepcopy(data.raw["item"]["pump"])
-loading_pump_item.name = "ship_loading_pump"
-loading_pump_item.place_result = "ship_loading_pump"
+loading_pump_item.name = "ship-loading-pump"
+loading_pump_item.place_result = "ship-loading-pump"
 
 local loading_pump_recipe = table.deepcopy(data.raw["recipe"]["pump"])
-loading_pump_recipe.name = "ship_loading_pump"
-loading_pump_recipe.results[1].name = "ship_loading_pump"
+loading_pump_recipe.name = "ship-loading-pump"
+loading_pump_recipe.results[1].name = "ship-loading-pump"
 
 local unloading_pump_item = table.deepcopy(data.raw["item"]["pump"])
-unloading_pump_item.name = "ship_unloading_pump"
-unloading_pump_item.place_result = "ship_unloading_pump"
+unloading_pump_item.name = "ship-unloading-pump"
+unloading_pump_item.place_result = "ship-unloading-pump"
 
 local unloading_pump_recipe = table.deepcopy(data.raw["recipe"]["pump"])
-unloading_pump_recipe.name = "ship_unloading_pump"
-unloading_pump_recipe.results[1].name = "ship_unloading_pump"
+unloading_pump_recipe.name = "ship-unloading-pump"
+unloading_pump_recipe.results[1].name = "ship-unloading-pump"
 
 data:extend({loading_pump_recipe, loading_pump_item, loading_pump,
              unloading_pump_recipe, unloading_pump_item, unloading_pump})

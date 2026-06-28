@@ -78,13 +78,13 @@ data:extend{
     name = "pump",
   },
 }
-local loading_pump = data.raw["pump"]["ship_loading_pump"]
+local loading_pump = data.raw["pump"]["ship-loading-pump"]
 local loading_pump_collision_mask = loading_pump.collision_mask
 loading_pump_collision_mask.layers["pump"] = true
 loading_pump.collision_mask = loading_pump_collision_mask
 
 
-local unloading_pump = data.raw["pump"]["ship_unloading_pump"]
+local unloading_pump = data.raw["pump"]["ship-unloading-pump"]
 local unloading_pump_collision_mask = unloading_pump.collision_mask
 unloading_pump_collision_mask.layers["pump"] = true
 unloading_pump.collision_mask = unloading_pump_collision_mask
