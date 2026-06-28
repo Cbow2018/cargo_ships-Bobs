@@ -1,5 +1,5 @@
 require("util")
-math2d = require("math2d")
+local math2d = require("math2d")
 require("__cargo-ships__/logic/ship_api")
 require("__cargo-ships__/logic/ship_placement")
 require("__cargo-ships__/logic/rail_placement")
@@ -11,7 +11,7 @@ require("__cargo-ships__/logic/oil_rig_logic")
 require("__cargo-ships__/logic/mapgen")
 --require("__cargo-ships__/logic/crane_logic")
 
-save_restore = require("__Robot256Lib__/script/save_restore")
+local save_restore = require("__Robot256Lib__/script/save_restore")
 
 
 is_waterway = util.list_to_map{
@@ -426,7 +426,7 @@ local function OnPlayerMinedEntity(event)
         local otherstock = entity.get_connected_rolling_stock(defines.rail_direction.front) or 
                            entity.get_connected_rolling_stock(defines.rail_direction.back)
         if otherstock then
-          storage.currently_mining[otherstock.unit_number] = entity
+          --storage.currently_mining[otherstock.unit_number] = entity
           
           -- If the player has an item which can be used to upgrade this ship entity, then this is an upgrade operation
           local do_cache = true
@@ -491,16 +491,11 @@ local function OnPlayerMinedEntity(event)
             otherstock.destroy()
             
           else
-            otherstock.set_driver(nil)  -- Eject player currently in the other stock so it can be mined along with the first one.
-            player.mine_entity(otherstock, true)
-            -- This mining operation completes before returning
-            -- Now merge the undo actions.  Most recent is entity, second-most-recent is otherstock
-            local item1 = player.undo_redo_stack.get_undo_item(1)
-            if #item1 == 1 and item1[1].type == "removed-entity" and storage.ship_engines[item1[1].target.name] then
-              -- otherstock was an engine that we can safely remove from the undo stack
-              --game.print("Removing engine from undo stack")
-              player.undo_redo_stack.remove_undo_item(1)
-            end
+            -- Otherstock needs to be mined along with entity
+            -- But the undo stack item won't be created until this event ends
+            -- check placement in next tick after wagons connect
+            table.insert(storage.check_placement_queue, {entity=otherstock, player=player, undo_index=1})
+            RegisterPlacementOnTick()
           end
         end
       end

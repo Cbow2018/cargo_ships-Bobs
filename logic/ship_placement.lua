@@ -1,4 +1,5 @@
 local math2d = require("math2d")
+local player_mine_entity_undo = require("__Robot256Lib__/script/player_mine_entity_undo")
 
 function localizeEngine(entity, ship_name)
   --game.print("entity orientation = "..tostring(entity.orientation))
@@ -170,6 +171,7 @@ function processPlacementQueue()
     local engine = entry.engine
     local player = entry.player
     local robot = entry.robot
+    local undo_index = entry.undo_index
     
     --log("checking "..tostring(entity).." "..tostring(entity.unit_number))
 
@@ -182,7 +184,14 @@ function processPlacementQueue()
           -- See if there is already an engine connected to this ship
           if not hasCorrectConnectedStock(entity) then
             --game.print("incorrectly coupled ship / no engine")
-            cancelPlacement(entity, player, robot)
+            if player and undo_index then
+              -- This is a delayed mining operation
+              entity.set_driver(nil)
+              player_mine_entity_undo(player, entity, undo_index, false)
+            else
+              -- This is a build check
+              cancelPlacement(entity, player, robot)
+            end
           else
             --game.print("Correct stock coupled but wasn't given by creator")
             -- Ship body would be okay as-is, but check if this is a marked for deconstruction
@@ -236,8 +245,15 @@ function processPlacementQueue()
 
       elseif storage.ship_engines[entity.name] then
         if not hasCorrectConnectedStock(entity) then
-          game.print{"cargo-ship-message.error-unlinked-engine", entity.localised_name}
-          cancelPlacement(entity, player)
+          if player and undo_index then
+            -- This is a delayed mining operation
+            entity.set_driver(nil)
+            player_mine_entity_undo(player, entity, undo_index, false)
+          else
+            -- This is a build check
+            game.print{"cargo-ship-message.error-unlinked-engine", entity.localised_name}
+            cancelPlacement(entity, player)
+          end
         elseif entity.to_be_deconstructed() then
           -- This engine is marked for deconstruction, make sure the attached ship is also
           local ship = entity.get_connected_rolling_stock(storage.ship_engines[entity.name].coupled_ship)
