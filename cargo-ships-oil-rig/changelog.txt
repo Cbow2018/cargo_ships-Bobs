@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.1
+Date: 2026-06-29
+  Bugfixes:
+    - Fixed crash when a script (like Auto Deconstruct) marked an Oil rig for deconstruction without specifying a player_index.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.0
 Date: 2026-06-29
   Features:

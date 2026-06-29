@@ -35,7 +35,8 @@ local function OnMarkedForDeconstruction(event)
   if entity.name == "oil_rig" then
     -- Mark or_tank and or_pole for deconstruction in the next tick so they are in the same undo item
     --game.print("Register oil rig deconstruction")
-    table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
+    local player = (event.player_index and game.players[event.player_index]) or nil
+    table.insert(storage.check_placement_queue, {entity=entity, player=player})
     RegisterPlacementOnTick()
   end
 end
