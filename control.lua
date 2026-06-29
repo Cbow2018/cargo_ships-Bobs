@@ -229,6 +229,48 @@ local function OnEntityDeleted(event)
 end
 
 
+
+-- Create ship engine corpse when the ship body dies
+local function OnEntityDied(event)
+  --log("entity deleted happened:"..serpent.block(event))
+  local entity = event.entity
+  if(entity and entity.valid) then
+    if storage.ship_bodies[entity.name] then
+      if entity.train then
+        if entity.train.back_stock then
+          if storage.ship_engines[entity.train.back_stock.name] then
+            --log("Destroying back_stock "..tostring(entity.train.back_stock))
+            entity.train.back_stock.die(event.force, event.cause)
+          end
+        end
+        if entity.train.front_stock then
+          if storage.ship_engines[entity.train.front_stock.name] then
+            --log("Destroying front_stock "..tostring(entity.train.front_stock))
+            entity.train.front_stock.die(event.force, event.cause)
+          end
+        end
+      end
+
+    elseif storage.ship_engines[entity.name] then
+      if entity.train then
+        if entity.train.front_stock then
+          if storage.ship_bodies[entity.train.front_stock.name] then
+            --log("Destroying front_stock "..tostring(entity.train.front_stock))
+            entity.train.front_stock.die(event.force, event.cause)
+          end
+        end
+        if entity.train.back_stock then
+          if storage.ship_bodies[entity.train.back_stock.name]  then
+            --log("Destroying back_stock "..tostring(entity.train.back_stock))
+            entity.train.back_stock.die(event.force, event.cause)
+          end
+        end
+      end
+    
+    end
+  end
+end
+
 -- Perform the destroyed action for this unit_number
 -- Each method checks if it applies
 function OnObjectDestroyed(event)
@@ -587,7 +629,7 @@ function init_events()
       table.insert(deleted_filters, {filter="name", name=name})
     end
   end
-  script.on_event(defines.events.on_entity_died, OnEntityDeleted, deleted_filters)
+  script.on_event(defines.events.on_entity_died, OnEntityDied, deleted_filters)
   script.on_event(defines.events.script_raised_destroy, OnEntityDeleted, deleted_filters)
   
   -- Handle Bridge components
