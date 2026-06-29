@@ -5,13 +5,13 @@ Date: 2026-06-28
     - Updated for Factorio 2.1.
     - Oil Tanker ships have 6 connections points, aligned visually with the graphics. (They still only carry one fluid per ship.)
     - Oil Tankers must be connected to dedicated "Ship loading pump" and "Ship unloading pump" entities, which have extended arms to reach the ship from land.
-    - Blueprints with Oil Rigs may be rotated and flipped, and properly retain circuit connections to the onboard storage tank and electric pole.
     - Ships may be fast-replaced and upgraded by robots with the new 2.1 feature.
   Changes:
     - The runtime API to add ships and boats has been replaced with a Mod Data format.  See the example in prototypes/ship-definitions.lua.
+    - The Oil rig and Offshore oil resource have been moved to a separate mod.
     - The Floating electric pole has been moved to a separate mod.
   Bugfixes:
-    - Fixed many, many inconsistencies when using undo and redo with ships and oil rigs.
+    - Fixed many, many inconsistencies when using undo and redo with ships.
     - Fixed that the Bridge item said it would produce a Port item when mined.
     - Fixed that placing a Bridge always set its quality back to normal.
     - Fixed some potential improper judgements of where ships can be placed.

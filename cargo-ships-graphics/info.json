@@ -1,9 +1,9 @@
 {
   "name": "cargo-ships-graphics",
   "version": "2.1.0",
-  "title": "Cargo Ships: Transport Graphics",
+  "title": "Cargo Ships Graphics",
   "author": "rude_grass",
-  "description": "Graphics library for Cargo Ships: Transport",
+  "description": "Graphics library for Cargo Ships",
   "factorio_version": "2.1",
   "dependencies": [
     "base"

@@ -7,8 +7,6 @@ require("__cargo-ships__/logic/long_reach")
 require("__cargo-ships__/logic/bridge_logic")
 require("__cargo-ships__/logic/blueprint_logic")
 require("__cargo-ships__/logic/ship_enter")
-require("__cargo-ships__/logic/oil_rig_logic")
-require("__cargo-ships__/logic/mapgen")
 --require("__cargo-ships__/logic/crane_logic")
 
 local save_restore = require("__Robot256Lib__/script/save_restore")
@@ -135,10 +133,7 @@ local function OnEntityBuilt(event)
     -- check placement in next tick after wagons connect
     table.insert(storage.check_placement_queue, {entity=entity, engine=engine, player=player, robot=event.robot})
     RegisterPlacementOnTick()
-  -- add oilrig component entities
-  elseif entity.name == "oil_rig" then
-    CreateOilRig(entity, player, event.robot)
-
+  
   -- create bridge
   elseif entity.name == "bridge_base" then
     CreateBridge(entity, player, event.robot)
@@ -160,11 +155,6 @@ local function OnMarkedForDeconstruction(event)
   elseif storage.ship_bodies[entity.name] or storage.ship_engines[entity.name] then
     -- If a ship or ship engine is marked for deconstruction, make sure its coupled pair is too
     -- But wait until the next tick after all undo/redo actions have been completed, if that's what caused this marking
-    table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
-    RegisterPlacementOnTick()
-  elseif entity.name == "oil_rig" then
-    -- Also mark or_tank and or_pole for deconstruction in the same undo item
-    --game.print("Register oil rig deconstruction")
     table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
     RegisterPlacementOnTick()
   end
@@ -234,14 +224,6 @@ local function OnEntityDeleted(event)
         end
       end
     
-    elseif entity.name == "entity-ghost" then
-      if entity.ghost_name == "oil_rig" then
-        -- Delete any or_tank or or_pole ghosts in the area
-        DestroyOilRigGhost(entity)
-      elseif storage.ship_bodies[entity.ghost_name] then
-        -- Delete any ship engine ghost in the area
-        DestroyShipGhost(entity)
-      end
     end
   end
 end
@@ -276,18 +258,6 @@ function OnObjectDestroyed(event)
       -- delete list for entity that doesn't exist anymore, regardless of what we did about it
       storage.waterway_ghosts[unit_number] = nil
     end
-  end
-  
-  -- Oil Rigs
-  local player, undo_index
-  if storage.currently_mining[unit_number] then
-    player = storage.currently_mining[unit_number].player
-    undo_index = storage.currently_mining[unit_number].undo_index
-    storage.currently_mining[unit_number] = nil
-  end
-  if DestroyOilRig(unit_number, player, undo_index) then
-    --log("OnObjectDestroyed happened:"..serpent.block(event))
-    return
   end
   
   -- Bridges
@@ -519,9 +489,6 @@ local function OnPlayerMinedEntity(event)
             RegisterPlacementOnTick()
           end
         end
-      elseif entity.name == "oil_rig" then
-        -- Save what player this oil_rig is being mined by so it can be added to their undo stack
-        storage.currently_mining[entity.unit_number] = {player=player, undo_index=1}
       end
     else
       -- This mining operation was started by script, don't start another one and clear the flag
@@ -592,7 +559,6 @@ function init_events()
       {filter="ghost", ghost_name="curved-waterway-b"},
       {filter="ghost", ghost_name="legacy-straight-waterway"},
       {filter="ghost", ghost_name="legacy-curved-waterway"},
-      {filter="name", name="oil_rig"},
       {filter="name", name="bridge_base"},
       {filter="rolling-stock"},
       {filter="rail"}
@@ -608,8 +574,8 @@ function init_events()
   script.on_event(defines.events.script_raised_built, OnEntityBuilt, entity_filters)
   script.on_event(defines.events.script_raised_revive, OnEntityBuilt, entity_filters)
 
-  -- delete invisible oil rig, bridge, and ship elements
-  local deleted_filters = {{filter="ghost_name", name="oil_rig"}}
+  -- delete invisible bridge and ship elements
+  local deleted_filters = {}
   if storage.ship_bodies then
     for name,_ in pairs(storage.ship_bodies) do
       table.insert(deleted_filters, {filter="name", name=name})
@@ -624,11 +590,11 @@ function init_events()
   script.on_event(defines.events.on_entity_died, OnEntityDeleted, deleted_filters)
   script.on_event(defines.events.script_raised_destroy, OnEntityDeleted, deleted_filters)
   
-  -- Handle Oil Rig and Bridge components
+  -- Handle Bridge components
   script.on_event(defines.events.on_object_destroyed, OnObjectDestroyed)
 
   -- recover fuel from mined ships
-  local mined_filters = {{filter="name", name="oil_rig"}}
+  local mined_filters = {}
   if storage.ship_bodies then
     for name,_ in pairs(storage.ship_bodies) do
       table.insert(mined_filters, {filter="name", name=name})
@@ -643,8 +609,6 @@ function init_events()
   script.on_event(defines.events.on_player_mined_entity, OnPlayerMinedEntity, mined_filters)
   script.on_event(defines.events.on_robot_mined_entity , OnRobotMinedEntity, mined_filters)
   
-  --script.on_event(defines.events.on_pre_player_mined_item, function(event) log("OnPrePlayerMinedItem happened:"..serpent.block(event)) end, mined_filters)
-  
   script.on_event(defines.events.on_undo_applied, OnUndoApplied)
   script.on_event(defines.events.on_redo_applied, OnRedoApplied)
   
@@ -655,7 +619,6 @@ function init_events()
     {filter="name", name="curved-waterway-b"},
     {filter="name", name="legacy-straight-waterway"},
     {filter="name", name="legacy-curved-waterway"},
-    {filter="name", name="oil_rig"},
   }
   if storage.ship_bodies then
     for name,_ in pairs(storage.ship_bodies) do
@@ -703,9 +666,6 @@ function init_events()
   -- rolling stock connection handling
   script.on_event(defines.events.on_train_created, OnTrainCreated)
 
-  -- Oil rig tank de-rotation
-  script.on_event({defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity}, CorrectOilRigTankRotation)
-
   -- Mod setting change propagation
   script.on_event(defines.events.on_runtime_mod_setting_changed, OnModSettingsChanged)
 
@@ -737,11 +697,9 @@ end
 local function init()
   -- Init storage variables
   storage.check_placement_queue = storage.check_placement_queue or {}
-  storage.oil_rigs = storage.oil_rigs or {}
   storage.bridges = storage.bridges or {}
   storage.bridge_destroyed_queue = storage.bridge_destroyed_queue or {}
   storage.ship_pump_selected = nil -- Obsolete, delete for migration's sake
-  storage.pump_markers = nil -- Obsolete, delete for migration's sake
   storage.disable_this_tick = storage.disable_this_tick or {}
   storage.driving_state_locks = storage.driving_state_locks or {}
   storage.currently_mining = storage.currently_mining or {}
@@ -756,19 +714,6 @@ local function init()
     ((type(storage.last_distance_bonus) == "number") and storage.last_distance_bonus)
       or settings.global["waterway_reach_increase"].value
   storage.current_distance_bonus = settings.global["waterway_reach_increase"].value
-
-  -- Enable oil-processing tech on migration from v1.0.12
-  for _, oil_rig in pairs(storage.oil_rigs) do
-    if oil_rig.entity and oil_rig.entity.valid then
-      UnlockOilProcessing(oil_rig.entity.force)
-    end
-  end
-  
-  -- Add Heating Reactors to Oil Rigs on Aquilo etc if necessary (in case a mod changed the heating flag or a surface condition)
-  MigrateOilRigReactors()
-
-  -- Enable offshore oil generation if it has been added to a save
-  oil_generation_migration()
 
   -- Register conditional events
   init_events()
@@ -827,9 +772,9 @@ setmetatable(_ENV,{
     error('\n\n[ER Global Lock] Forbidden global *write*:\n'
       .. serpent.line{key=key or '<nil>',value=value or '<nil>'}..'\n')
     end,
-  --[[__index   =function (self,key) --locked_global_read
+  __index   =function (self,key) --locked_global_read
     error('\n\n[ER Global Lock] Forbidden global *read*:\n'
       .. serpent.line{key=key or '<nil>'}..'\n')
-    end ,]]
+    end ,
   })
 

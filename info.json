@@ -10,12 +10,9 @@
     "cargo-ships-graphics",
 	"Robot256Lib",
     "+ cargo-ships-floating-electric-pole",
+    "+ cargo-ships-oil-rig",
     "(?) factorio-world",
-    "(?) SeaBlock",
     "(?) Hovercrafts",
-    "(?) angelspetrochem",
-    "(?) ctg",
-    "(?) ctgtemp2",
     "? Krastorio2",
     "? space-exploration"
   ]

@@ -4,6 +4,7 @@ Date: 2026-06-28
   Changes:
     - Updated for Factorio 2.1.
     - Refactored Floating Electric Pole graphics into its own mod.
+    - Refactored Oil Rig and Offshore Oil graphics into its own mod.
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.5
 Date: 2026-03-12

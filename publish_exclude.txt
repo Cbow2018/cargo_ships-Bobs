@@ -6,6 +6,8 @@ publish_exclude.txt
 .bat
 blender
 cargo-ships-graphics
+cargo-ships-oil-rig
+cargo-ships-floating-electric-pole
 todo
 .zip
 temp
