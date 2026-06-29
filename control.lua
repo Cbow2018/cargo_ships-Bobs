@@ -724,11 +724,40 @@ end
 script.on_load(function()
   init_events()
 end)
+
 script.on_init(function()
   init()
 end)
-script.on_configuration_changed(function()
+
+script.on_configuration_changed(function(event)
+  -- Migration validation checks
+  if event.old_version then
+    log("Cargo Ships migrating save file from Factorio "..event.old_version)
+  end
+  if event.mod_changes["cargo-ships"] then
+    log("Cargo Ships migrating save file from Cargo Ships "..event.mod_changes["cargo-ships"].old_version)
+  end
+  
+  local was_20 = event.old_version and string.find(event.old_version, "2.0")
+  was_20 = (was_20 and was_20 == 1) or false
+  local was_21 = event.old_version and string.find(event.old_version, "2.1")
+  was_21 = (was_21 and was_21 == 1) or false
+  
+  if not (was_20 or was_21) then    -- Old map was saved before 2.0
+    -- Reading a 1.1 or older save
+    log(">>> CARGO SHIPS 1.1 MIGRATION WARNING TRIGGERED <<<")
+    game.print({"cargo-ship-message.migration-11-warning"})
+  end
+  
+  if not was_21 and (event.mod_changes["cargo-ships"] and event.mod_changes["cargo-ships"].old_version) and        -- Old map from before 2.1 had cargo ships, and
+     not ((event.mod_changes["cargo-ships-oil-rig"] and event.mod_changes["cargo-ships-oil-rig"].new_version) and  -- One or both companion mods is not installed
+          (event.mod_changes["cargo-ships-floating-electric-pole"] and event.mod_changes["cargo-ships-floating-electric-pole"].new_version)) then
+    log(">>> CARGO SHIPS 2.0 MIGRATION WARNING TRIGGERED <<<")
+    game.print({"cargo-ship-message.migration-21-warning"})
+  end
+  
   init()
+  
 end)
 
 ---@param train LuaTrain
