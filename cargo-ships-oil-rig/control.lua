@@ -43,18 +43,10 @@ end
 
 local function OnCancelledDeconstruction(event)
   local entity = event.entity
-  local find_parts = nil
-  if entity.name == "oil_rig" then
-    find_parts = {"or_tank", "or_pole"}
-  elseif entity.name == "or_tank" then
-    find_parts = {"oil_rig", "or_pole"}
-  elseif entity.name == "or_pole" then
-    find_parts = {"oil_rig", "or_tank"}
-  end
   
-  if find_parts then
+  if entity.name == "oil_rig" then
     -- If an oil rig part has deconstruction cancelled, cancel the companion entities as well
-    local parts = entity.surface.find_entities_filtered{position=entity.position, name = find_parts, to_be_deconstructed = true}
+    local parts = entity.surface.find_entities_filtered{position=entity.position, name = {"or_tank", "or_pole"}, to_be_deconstructed = true}
     local player = event.player_index and game.players[event.player_index]
     local force = (player and player.force) or entity.force
     for _,part in pairs(parts) do
@@ -146,13 +138,8 @@ function init_events()
   local mined_filters = {{filter="name", name="oil_rig"}}
   script.on_event(defines.events.on_player_mined_entity, OnPlayerMinedEntity, mined_filters)
   
-  local deconstructed_filters = {
-    {filter="name", name="oil_rig"},
-    {filter="name", name="or_tank"},
-    {filter="name", name="or_pole"},
-  }
-  script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction, deconstructed_filters)
-  script.on_event(defines.events.on_cancelled_deconstruction, OnCancelledDeconstruction, deconstructed_filters)
+  script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction, {{filter="name", name="oil_rig"}})
+  script.on_event(defines.events.on_cancelled_deconstruction, OnCancelledDeconstruction, {{filter="name", name="oil_rig"}})
   
   -- update ship placement
   RegisterPlacementOnTick()
@@ -170,16 +157,8 @@ local function init()
   -- Init storage variables
   storage.check_placement_queue = storage.check_placement_queue or {}
   storage.oil_rigs = storage.oil_rigs or {}
-  storage.disable_this_tick = storage.disable_this_tick or {}
   storage.currently_mining = storage.currently_mining or {}
 
-  -- Enable oil-processing tech on migration from v1.0.12
-  for _, oil_rig in pairs(storage.oil_rigs) do
-    if oil_rig.entity and oil_rig.entity.valid then
-      UnlockOilProcessing(oil_rig.entity.force)
-    end
-  end
-  
   -- Add Heating Reactors to Oil Rigs on Aquilo etc if necessary (in case a mod changed the heating flag or a surface condition)
   MigrateOilRigReactors()
 
@@ -214,9 +193,9 @@ setmetatable(_ENV,{
     error('\n\n[ER Global Lock] Forbidden global *write*:\n'
       .. serpent.line{key=key or '<nil>',value=value or '<nil>'}..'\n')
     end,
-  --[[__index   =function (self,key) --locked_global_read
+  __index   =function (self,key) --locked_global_read
     error('\n\n[ER Global Lock] Forbidden global *read*:\n'
       .. serpent.line{key=key or '<nil>'}..'\n')
-    end ,]]
+    end ,
   })
 
