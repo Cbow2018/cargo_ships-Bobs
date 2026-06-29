@@ -1,0 +1,18 @@
+{
+  "name": "cargo-ships-oil-rig",
+  "version": "2.1.0",
+  "title": "Cargo Ships: Oil Rig",
+  "author": "rude_grass",
+  "description": "Adds offshore oil deposits and deep sea oil rigs.",
+  "factorio_version": "2.1",
+  "dependencies": [
+    "base",
+    "(?) factorio-world",
+    "(?) SeaBlock",
+    "(?) Hovercrafts",
+    "(?) angelspetrochem",
+    "(?) ctgtemp2",
+    "? Krastorio2",
+    "? space-exploration"
+  ]
+}
