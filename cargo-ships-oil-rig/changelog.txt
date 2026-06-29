@@ -1,12 +1,14 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
-Date: 2026-06-28
+Date: 2026-06-29
   Features:
     - Updated for Factorio 2.1.
-    - Oil rig and Offshore oil resource moved to a separate mod so they can be added and removed separately from Cargo Ships.
+    - Moved Oil rig and Offshore oil from Cargo Ships into a standalone mod.
+  Changes:
     - Blueprints with Oil rigs may be rotated and flipped.
     - Oil rigs may be fast-replaced with different qualities.
   Bugfixes:
     - Fixed that circuit connections to the tank and pole were lost when placing Oil rig blueprints.
     - Fixed that circuit connections to the tank and pole were lost when using undo/redo operations.
+    - Fixed that circuit connections to the tank and pole were lost when killed and the corpse was rebuilt.
     - Fixed that Oil rig onboard generator made sound when disabled by settings.
