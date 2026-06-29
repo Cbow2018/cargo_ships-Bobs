@@ -19,7 +19,7 @@ local function OnEntityBuilt(event)
   -- check ghost entities first
   if entity.name == "entity-ghost" then
     if entity.ghost_name == "or_tank" or entity.ghost_name == "or_pole" then
-      -- Delete oil rig parts if placed without an oil_rig
+      -- Delete oil rig parts in the next tick if placed without an oil_rig
       table.insert(storage.check_placement_queue, {entity=entity})
       RegisterPlacementOnTick()
     end
@@ -27,14 +27,13 @@ local function OnEntityBuilt(event)
   -- add oilrig component entities
   elseif entity.name == "oil_rig" then
     CreateOilRig(entity, player, event.robot)
-
   end
 end
 
 local function OnMarkedForDeconstruction(event)
   local entity = event.entity
   if entity.name == "oil_rig" then
-    -- Also mark or_tank and or_pole for deconstruction in the same undo item
+    -- Mark or_tank and or_pole for deconstruction in the next tick so they are in the same undo item
     --game.print("Register oil rig deconstruction")
     table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
     RegisterPlacementOnTick()
@@ -45,7 +44,7 @@ local function OnCancelledDeconstruction(event)
   local entity = event.entity
   
   if entity.name == "oil_rig" then
-    -- If an oil rig part has deconstruction cancelled, cancel the companion entities as well
+    -- If an oil rig has deconstruction cancelled, cancel the companion entities immediately as well
     local parts = entity.surface.find_entities_filtered{position=entity.position, name = {"or_tank", "or_pole"}, to_be_deconstructed = true}
     local player = event.player_index and game.players[event.player_index]
     local force = (player and player.force) or entity.force
@@ -58,14 +57,42 @@ end
 -- delete invisible entities if master entity is destroyed
 local function OnEntityDeleted(event)
   --log("entity deleted happened:"..serpent.block(event))
-  local entity = event.entity
-  if(entity and entity.valid) then
-    if entity.name == "entity-ghost" then
-      if entity.ghost_name == "oil_rig" then
+  local ghost = event.entity
+  if(ghost and ghost.valid) then
+    if ghost.name == "entity-ghost" then
+      if ghost.ghost_name == "oil_rig" then
         -- Delete any or_tank or or_pole ghosts in the area
-        DestroyOilRigGhost(entity)
+        --log("Destroying oil rig ghost "..tostring(ghost))
+        local poles = ghost.surface.find_entities_filtered{ghost_name = "or_pole", position = ghost.position, radius = 1}
+        for _,pole in pairs(poles) do
+          pole.destroy()
+        end
+        local tanks = ghost.surface.find_entities_filtered{ghost_name = "or_tank", position = ghost.position, radius = 1}
+        for _,tank in pairs(tanks) do
+          tank.destroy()
+        end
       end
     end
+  end
+end
+
+-- Create tank and pole corpses when the oil_rig dies
+local function OnEntityDied(event)
+  local entity = event.entity
+  if entity and entity.name == "oil_rig" and storage.oil_rigs and storage.oil_rigs[entity.unit_number] then
+    --log("OnEntityDied:"..serpent.block(event))
+    local data = storage.oil_rigs[entity.unit_number]
+    if data.pole and data.pole.valid then
+      data.pole.destructible = true
+      local result = data.pole.die(event.force, event.cause)
+      --log("tried to kill pole: "..tostring(result)..tostring(data.pole.valid))
+    end
+    if data.tank and data.tank.valid then
+      data.tank.destructible = true
+      local result = data.tank.die(event.force, event.cause)
+      --log("tried to kill tank: "..tostring(result)..tostring(data.tank.valid))
+    end
+    --log(serpent.block(data.surface.find_entities_filtered{ghost_name={"or_tank", "or_pole"}, position=data.position, radius=3}))
   end
 end
 
@@ -77,19 +104,21 @@ function OnObjectDestroyed(event)
   -- Without this check, useful_id may collide with an oil rig unit_number and trigger unintended destruction
   if event.type ~= defines.target_type.entity then return end
 
+  --log("OnObjectDestroyed happened:"..serpent.block(event))
+  
   local unit_number = event.useful_id
   
   -- Oil Rigs
+  -- Check if this oil rig was destroyed because a player mined it
   local player, undo_index
   if storage.currently_mining[unit_number] then
     player = storage.currently_mining[unit_number].player
     undo_index = storage.currently_mining[unit_number].undo_index
     storage.currently_mining[unit_number] = nil
   end
-  if DestroyOilRig(unit_number, player, undo_index) then
-    --log("OnObjectDestroyed happened:"..serpent.block(event))
-    return
-  end
+  
+  -- If it was mined by a player, this function will add the or_pole and or_tank to the undo queue
+  DestroyOilRig(unit_number, player, undo_index)
   
 end
 
@@ -97,8 +126,9 @@ end
 -- When the player mines a ship or engine, also make the player mine the coupled entity
 local function OnPlayerMinedEntity(event)
   --log("OnPlayerMined happened:"..serpent.block(event))
-  if event.buffer and event.buffer.valid then log("Event buffer: "..serpent.block(event.buffer.get_contents())) end
+  --if event.buffer and event.buffer.valid then log("Event buffer: "..serpent.block(event.buffer.get_contents())) end
   --log("Player cursor: "..serpent.line(game.players[event.player_index].cursor_stack))
+  
   local entity = event.entity
   local player = game.players[event.player_index]
   if entity and entity.valid then
@@ -106,7 +136,10 @@ local function OnPlayerMinedEntity(event)
     if not storage.currently_mining[entity.unit_number] then
       if entity.name == "oil_rig" then
         -- Save what player this oil_rig is being mined by so it can be added to their undo stack
-        storage.currently_mining[entity.unit_number] = {player=player, undo_index=1}
+        storage.currently_mining[entity.unit_number] = {
+              player = player,
+              undo_index = 1
+        }
       end
     else
       -- This mining operation was started by script, don't start another one and clear the flag
@@ -114,6 +147,15 @@ local function OnPlayerMinedEntity(event)
     end
   end
 end
+
+local function CorrectOilRigRotation(event)
+  if event.entity and event.entity.valid and
+     (event.entity.name == "or_tank" or event.entity.name == "oil_rig") then
+    event.entity.direction = defines.direction.north
+    event.entity.mirroring = false
+  end
+end
+
 
 
 -- Register conditional events based on mod settting
@@ -127,19 +169,21 @@ function init_events()
   script.on_event(defines.events.script_raised_revive, OnEntityBuilt, entity_filters)
 
   -- delete ghosts of invisible oil rig elements
-  local deleted_filters = {{filter="ghost_name", name="oil_rig"}}
-  script.on_event(defines.events.on_entity_died, OnEntityDeleted, deleted_filters)
-  script.on_event(defines.events.script_raised_destroy, OnEntityDeleted, deleted_filters)
+  local ghost_filters = {{filter="ghost_name", name="oil_rig"}}
+  script.on_event(defines.events.on_entity_died, OnEntityDeleted, ghost_filters)
+  script.on_event(defines.events.script_raised_destroy, OnEntityDeleted, ghost_filters)
+  
+  -- Create or_tank and or_pole corpses if oil_rig is killed
+  script.on_event(defines.events.on_entity_died, OnEntityDied, entity_filters)
   
   -- Destroy Oil Rig components if it disappears
   script.on_event(defines.events.on_object_destroyed, OnObjectDestroyed)
 
   -- Add Oil Rig components to undo stack
-  local mined_filters = {{filter="name", name="oil_rig"}}
-  script.on_event(defines.events.on_player_mined_entity, OnPlayerMinedEntity, mined_filters)
+  script.on_event(defines.events.on_player_mined_entity, OnPlayerMinedEntity, entity_filters)
   
-  script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction, {{filter="name", name="oil_rig"}})
-  script.on_event(defines.events.on_cancelled_deconstruction, OnCancelledDeconstruction, {{filter="name", name="oil_rig"}})
+  script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction, entity_filters)
+  script.on_event(defines.events.on_cancelled_deconstruction, OnCancelledDeconstruction, entity_filters)
   
   -- update ship placement
   RegisterPlacementOnTick()
@@ -148,7 +192,8 @@ function init_events()
   script.on_event(defines.events.on_player_pipette, FixPipette)
   
   -- Oil rig tank de-rotation
-  script.on_event({defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity}, CorrectOilRigTankRotation)
+  script.on_event({ defines.events.on_player_rotated_entity, 
+                    defines.events.on_player_flipped_entity}, CorrectOilRigRotation)
 
 end
 

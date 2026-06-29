@@ -1,71 +1,92 @@
 local math2d = require("math2d")
-
+local find_revive_make = require("__cargo-ships-oil-rig__/logic/find_revive_make")
+local pole_offset = {0,0.1}
 -----------------------------------------------------------------------------------------------------------
--- oil_rigs: Check for any oil_rig entities that have been removed from the global table, and rebuild them.
+-- Migrating from cargo-ships to cargo-ships-oil-rig, need to rebuild the global table from scratch
+-- Also make sure all the sub-entities are in the right place
 
-local function find_teleport_make(name, surface, area, position, force)
-  local entity
-  local found = surface.find_entities_filtered{name=name, area=area}
-  for _,e in pairs(found) do
-    if e.position.x == position.x and e.position.y == position.y then
-      entity = e
-      log("Found existing "..name.." entity "..tostring(entity))
-      entity.direction = defines.direction.north
-      entity.mirroring = false
-      break
-    end
-  end
-  if not entity and found[1] then
-    entity = found[1]
-    log("Teleporting existing "..name.." entity "..tostring(entity))
-    entity.teleport(position)
-    entity.direction = defines.direction.north
-    entity.mirroring = false
-  end
-  if not entity then
-    entity = surface.create_entity{name=name, position=position, force=force, create_build_effect_smoke=false}
-    log("Making new "..name.." entity "..tostring(entity))
-  end
-  return entity
-end
-
-local function offsetArea(area, vector)
-  return {math2d.position.add(vector, area.left_top or area[1]), 
-          math2d.position.add(vector, area.right_bottom or area[2])}
-end
-
+storage.oil_rigs = storage.oil_rigs or {}
 
 for _, surface in pairs(game.surfaces) do
   for _, entity in pairs(surface.find_entities_filtered{name="oil_rig"}) do
     if not storage.oil_rigs[entity.unit_number] then
-      log("Repairing oil_rig "..tostring(entity))
-      -- Due to the object_id collision bug in 1.0.31 and prior, oil rig sub-entities may be deleted when
-      -- e.g. a train with the same id as the oil_rig entity number is destroyed.
-      -- Need to recreate the subentities and re-add it to the global table.
+      local logname = tostring(entity.unit_number).." "..tostring(entity).." ("..entity.quality.name..")"
+      log("Registering oil_rig "..logname)
       local force = entity.force
       local position = entity.position
+      local quality = entity.quality
+      local radius = 3 -- wider search area to make sure we get everything
       
-      local area = offsetArea(entity.prototype.selection_box, position)
+      -- Search for existing entities, even if they might not be in the right place
+      entity =      find_revive_make{ name = "oil_rig",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = position,
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                    }
       
-      -- Search for existing entities, and they might not be in the right place
-      local power, pole, radar, tank
+      local power = find_revive_make{ name = "or_power_electric",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = position,
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                    }
       
-      entity = find_teleport_make("oil_rig", surface, area, position, force)
+      local radar = find_revive_make{ name = "or_radar",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = position,
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                    }
+
+      -- Only make a reactor if it's on a surface that needs heating
+      local reactor
+      local need_reactor = false
+      if prototypes.entity["or_reactor"] and (surface.planet and surface.planet.prototype.entities_require_heating) then
+        need_reactor = true
+        reactor = find_revive_make{   name = "or_reactor",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = position,
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                  }
+      end
       
-      -- Fluid burning generator, or_power_electric
-      power = find_teleport_make("or_power_electric", surface, area, position, force)
+      local pole =  find_revive_make{ name = "or_pole",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = math2d.position.add(position,pole_offset),
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                  }
       
-      -- Electric pole, or_pole
-      pole = find_teleport_make("or_pole", surface, area, position, force)
+      local tank =  find_revive_make{ name = "or_tank",
+                                      quality = quality,
+                                      force = force,
+                                      surface = surface,
+                                      position = position,
+                                      radius = radius,
+                                      create_build_effect_smoke = false,
+                                      verbose = true
+                                  }
       
-      -- Radar, or_radar
-      radar = find_teleport_make("or_radar", surface, area, position, force)
-      
-      -- Storage tank, or_tank
-      tank = find_teleport_make("or_tank", surface, area, position, force)
       
       if not (entity and power and pole and radar and tank) then
-        log("Could not create all oil rig components. Oil rig "..tostring(entity).." will be deleted.")
+        log("Could not create all oil rig components. Oil rig "..logname.." will be deleted.")
         if tank and tank.valid then tank.destroy() end
         if radar and radar.valid then radar.destroy() end
         if pole and pole.valid then pole.destroy() end

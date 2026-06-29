@@ -1,5 +1,5 @@
 local math2d = require("math2d")
-
+local find_revive_make = require("__cargo-ships-oil-rig__/logic/find_revive_make")
 
 local pole_offset = {0,0.1}
 
@@ -15,45 +15,60 @@ function CreateOilRig(entity, player, robot)
   local position = entity.position
   local quality = entity.quality
   
+  log("Creating oil rig "..tostring(entity).." ("..entity.quality.name..")")
+  
   -- Fix the orientation of the oil_rig when we create it, since blueprint might be rotated
   entity.mirroring = false
   entity.direction = defines.direction.north
   
-  -- Create component entities or revive ghosts
-  local power = surface.create_entity{name="or_power_electric", quality=quality, position=position, force=force, create_build_effect_smoke=false}
-  local radar = surface.create_entity{name="or_radar", quality=quality, position=position, force=force, create_build_effect_smoke=false}
+  -- Fast-replace existing entities, revive ghosts, or create new component entities as required
   
+  
+  local power = find_revive_make{ name = "or_power_electric",
+                                  quality = quality,
+                                  surface = surface,
+                                  position = position,
+                                  force = force,
+                                  create_build_effect_smoke = false
+                                }
+  
+  local radar = find_revive_make{ name = "or_radar",
+                                  quality = quality,
+                                  surface = surface,
+                                  position = position,
+                                  force = force,
+                                  create_build_effect_smoke = false
+                                }
+
   -- Only make a reactor if it's on a surface that needs heating
   local reactor
   local need_reactor = false
   if prototypes.entity["or_reactor"] and (surface.planet and surface.planet.prototype.entities_require_heating) then
-    reactor = surface.create_entity{name="or_reactor", quality=quality, position=position, force=force, create_build_effect_smoke=false}
     need_reactor = true
+    reactor = find_revive_make{ name = "or_reactor",
+                                  quality = quality,
+                                  surface = surface,
+                                  position = position,
+                                  force = force,
+                                  create_build_effect_smoke = false
+                                }
   end
   
-  local pole,dummy
-  local pole_ghost = surface.find_entities_filtered{ghost_name = "or_pole", position = position, radius = 1, limit = 1}[1]
-  if pole_ghost then
-    --game.print("Revived or_pole ghost")
-    dummy,pole = pole_ghost.silent_revive()
-    pole.teleport(math2d.position.add(position,pole_offset))
-  end
-  if not pole then
-    pole = surface.create_entity{name = "or_pole", quality=quality, position = math2d.position.add(position,pole_offset), force = force, create_build_effect_smoke=false}
-  end
-  
-  local tank
-  local tank_ghost = surface.find_entities_filtered{ghost_name = "or_tank", position = position, radius = 1, limit = 1}[1]
-  if tank_ghost then
-    --game.print("Revived or_tank ghost")
-    dummy,tank = tank_ghost.silent_revive()
-    tank.teleport(position)
-    tank.mirroring = false
-    tank.direction = defines.direction.north
-  end
-  if not tank then
-    tank = surface.create_entity{name = "or_tank", quality=quality, position = entity.position, force = entity.force, create_build_effect_smoke=false}
-  end
+  local pole =  find_revive_make{ name = "or_pole",
+                                  quality = quality,
+                                  surface = surface,
+                                  position = math2d.position.add(position,pole_offset),
+                                  force = force,
+                                  create_build_effect_smoke = false
+                                }
+
+  local tank =  find_revive_make{ name = "or_tank",
+                                  quality = quality,
+                                  surface = surface,
+                                  position = position,
+                                  force = force,
+                                  create_build_effect_smoke = false
+                                }
   
   -- If there was a problem, cancel the construction
   if not (power and pole and radar and tank and (reactor or not need_reactor)) then
@@ -102,10 +117,13 @@ function CreateOilRig(entity, player, robot)
   return entry
 end
 
--- Destroy the oil_rig sub-entities. If player is given, add the pole and tank to their undo stack.
+-- Destroy the oil_rig sub-entities.
+-- If player is given, add the pole and tank to their undo stack.
+-- If a ghost oil_rig was created, let's make ghosts of or_tank and or_pole
 function DestroyOilRig(unit_number, player, undo_index)
   if storage.oil_rigs and storage.oil_rigs[unit_number] then
     local data = storage.oil_rigs[unit_number]
+    log("Destroying oil_rig "..tostring(unit_number).." at "..util.positiontostr(data.position))
     if data.pole and data.pole.valid then
       data.pole.destroy{player=player, undo_index=undo_index}
     end
@@ -123,17 +141,6 @@ function DestroyOilRig(unit_number, player, undo_index)
     end
     storage.oil_rigs[unit_number] = nil
     return true
-  end
-end
-
-function DestroyOilRigGhost(ghost)
-  local poles = ghost.surface.find_entities_filtered{ghost_name = "or_pole", position = ghost.position, radius = 1}
-  for _,pole in pairs(poles) do
-    pole.destroy()
-  end
-  local tanks = ghost.surface.find_entities_filtered{ghost_name = "or_tank", position = ghost.position, radius = 1}
-  for _,tank in pairs(tanks) do
-    tank.destroy()
   end
 end
 
@@ -164,6 +171,7 @@ end
 
 -- Add missing reactors to any oil rigs on heating-required surfaces
 -- Used in on_configuration_changed since this could change with mods being installed I guess
+-- Don't bother to remove existing reactors just because planet no longer requires heating
 function MigrateOilRigReactors()
   if prototypes.entity["or_reactor"] then
     if storage.oil_rigs then
@@ -171,7 +179,13 @@ function MigrateOilRigReactors()
       for unit_number, rig_data in pairs(storage.oil_rigs) do
         local surface = rig_data.surface
         if surface.planet and surface.planet.prototype.entities_require_heating and not rig_data.reactor then
-          rig_data.reactor = surface.create_entity{name="or_reactor", quality=rig_data.entity.quality, position=rig_data.position, force=rig_data.entity.force, create_build_effect_smoke=false}
+          rig_data.reactor = find_revive_make{ name = "or_reactor",
+                                  quality = rig_data.entity.quality,
+                                  surface = surface,
+                                  position = rig_data.position,
+                                  force = rig_data.entity.force,
+                                  create_build_effect_smoke = false
+                                }
           log("Added Oil Rig Reactor to oil rig on surface "..surface.name.." at "..util.positiontostr(rig_data.position))
         end
       end
@@ -187,13 +201,6 @@ function MigrateOilRigReactors()
       end
       --log(serpent.block(storage.oil_rigs))
     end
-  end
-end
-
-function CorrectOilRigTankRotation(event)
-  if event.entity and event.entity.valid and (event.entity.name == "or_tank" or event.entity.name == "oil_rig") then
-    event.entity.direction = defines.direction.north
-    event.entity.mirroring = false
   end
 end
 
