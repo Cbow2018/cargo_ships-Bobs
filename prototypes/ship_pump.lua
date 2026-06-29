@@ -187,5 +187,61 @@ local unloading_pump_recipe = table.deepcopy(data.raw["recipe"]["pump"])
 unloading_pump_recipe.name = "ship-unloading-pump"
 unloading_pump_recipe.results[1].name = "ship-unloading-pump"
 
+
+
+local function add_pipecover_layer(prototype, shifts)
+  local frame_one_32 = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+  for _, direction_data in pairs(shifts) do
+    local pump_direction = direction_data[1]
+    local pipe_direction = direction_data[2]
+    local shift = direction_data[3]
+
+    local animation = prototype.animations[pump_direction]
+    if not animation.layers then
+      animation[pump_direction] = {
+        layers = {animation[pump_direction]}
+      }
+    end
+    table.insert(animation.layers, {
+      layers = {
+        {
+          filename = "__base__/graphics/entity/pipe-covers/pipe-cover-"..pipe_direction..".png",
+          height = 128,
+          priority = "extra-high",
+          scale = 0.5,
+          width = 128,
+          frame_sequence = frame_one_32,
+          shift = shift
+        }
+      }
+    })
+    table.insert(animation.layers, {
+      draw_as_shadow = true,
+      filename = "__base__/graphics/entity/pipe-covers/pipe-cover-"..pipe_direction.."-shadow.png",
+      height = 128,
+      priority = "extra-high",
+      scale = 0.5,
+      width = 128,
+      frame_sequence = frame_one_32,
+      shift = shift
+    })
+  end
+end
+
+add_pipecover_layer(loading_pump, {
+  {"north", "north", {0, -0.5}},
+  {"east", "east", {0.5, 0}},
+  {"south", "south", {1/64, 0.5}},
+  {"west", "west", {-0.5, 0}}
+})
+add_pipecover_layer(unloading_pump, {
+  {"north", "south", {0, 00.5}},
+  {"east", "west", {-0.5, 0}},
+  -- {"south", "north", {1/64, -0.5 - 4/64}}, -- Already has a fitting pipe cover
+  {"west", "east", {0.5, 0}}
+})
+
+
 data:extend({loading_pump_recipe, loading_pump_item, loading_pump,
              unloading_pump_recipe, unloading_pump_item, unloading_pump})
