@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.2
+Date: 2026-06-29
+  Bugfixes:
+    - Fixed that migration warnings were erroneously displayed when Factorio version did not change.
+    - Fixed crash if a ship is marked for deconstruction by script without player_index specified.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.1
 Date: 2026-06-29
   Bugfixes:

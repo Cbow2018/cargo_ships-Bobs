@@ -155,7 +155,8 @@ local function OnMarkedForDeconstruction(event)
   elseif storage.ship_bodies[entity.name] or storage.ship_engines[entity.name] then
     -- If a ship or ship engine is marked for deconstruction, make sure its coupled pair is too
     -- But wait until the next tick after all undo/redo actions have been completed, if that's what caused this marking
-    table.insert(storage.check_placement_queue, {entity=entity, player=game.players[event.player_index]})
+    local player = (event.player_index and game.players[event.player_index]) or nil
+    table.insert(storage.check_placement_queue, {entity=entity, player=player})
     RegisterPlacementOnTick()
   end
 end
@@ -780,9 +781,11 @@ script.on_configuration_changed(function(event)
     log("Cargo Ships migrating save file from Cargo Ships "..event.mod_changes["cargo-ships"].old_version)
   end
   
+  -- If the previous version is listed and starts with 2.0, then it is safe to migrate
   local was_20 = event.old_version and string.find(event.old_version, "2.0")
   was_20 = (was_20 and was_20 == 1) or false
-  local was_21 = event.old_version and string.find(event.old_version, "2.1")
+  -- If the previous version is not listed OR is listed and starts with 2.1, no migration is needed
+  local was_21 = (not event.old_version) or (event.old_version and string.find(event.old_version, "2.1"))
   was_21 = (was_21 and was_21 == 1) or false
   
   if not (was_20 or was_21) then    -- Old map was saved before 2.0
