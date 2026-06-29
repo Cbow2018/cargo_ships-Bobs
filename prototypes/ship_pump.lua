@@ -233,13 +233,17 @@ add_pipecover_layer(loading_pump, {
   {"north", "north", {0, -0.5}},
   {"east", "east", {0.5, 0}},
   {"south", "south", {1/64, 0.5}},
-  {"west", "west", {-0.5, 0}}
+  {"west", "west", {-0.5, 0}},
+  -- Output side
+  {"north", "south", {0, 2.5}},
 })
 add_pipecover_layer(unloading_pump, {
-  {"north", "south", {0, 00.5}},
+  {"north", "south", {0, 0.5}},
   {"east", "west", {-0.5, 0}},
   -- {"south", "north", {1/64, -0.5 - 4/64}}, -- Already has a fitting pipe cover
-  {"west", "east", {0.5, 0}}
+  {"west", "east", {0.5, 0}},
+  -- Output side
+  {"south", "south", {0, 2.5 - 1/64 }},
 })
 
 
