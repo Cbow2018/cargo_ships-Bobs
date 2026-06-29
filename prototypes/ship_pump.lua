@@ -143,9 +143,35 @@ shift_animation4way(offset_rotated, unloading_pump.wagon_connection_graphics.bas
 
 
 
+-------------
+-- New Icons for pumps
+local function get_icons(prototype)
+  local icons = prototype.icons or {{icon=prototype.icon, icon_size=prototype.icon_size}}
+  for _,icon in pairs(icons) do
+    icon.icon_size = icon.icon_size or 64
+  end
+  return icons
+end
+
+local loading_icon =   util.combine_icons(get_icons(pump), 
+        get_icons(data.raw["virtual-signal"]["up-arrow"]), 
+        {tint={0.4,1,0.4}, scale=0.6, shift={7,-7}})
+local unloading_icon = util.combine_icons(get_icons(pump), 
+        get_icons(data.raw["virtual-signal"]["down-arrow"]), 
+        {tint={1,0.4,0.4}, scale=0.6, shift={7,-7}})
+
+
+loading_pump.icon = nil
+loading_pump.icons = loading_icon
+unloading_pump.icon = nil
+unloading_pump.icons = unloading_icon
+
+
 local loading_pump_item = table.deepcopy(data.raw["item"]["pump"])
 loading_pump_item.name = "ship-loading-pump"
 loading_pump_item.place_result = "ship-loading-pump"
+loading_pump_item.icon = nil
+loading_pump_item.icons = loading_icon
 
 local loading_pump_recipe = table.deepcopy(data.raw["recipe"]["pump"])
 loading_pump_recipe.name = "ship-loading-pump"
@@ -154,6 +180,8 @@ loading_pump_recipe.results[1].name = "ship-loading-pump"
 local unloading_pump_item = table.deepcopy(data.raw["item"]["pump"])
 unloading_pump_item.name = "ship-unloading-pump"
 unloading_pump_item.place_result = "ship-unloading-pump"
+unloading_pump_item.icon = nil
+unloading_pump_item.icons = unloading_icon
 
 local unloading_pump_recipe = table.deepcopy(data.raw["recipe"]["pump"])
 unloading_pump_recipe.name = "ship-unloading-pump"
