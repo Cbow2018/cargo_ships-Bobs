@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.4
+Date: 2026-06-30
+  Bugfixes:
+    - Fixed erroneous migration warnings when loading a save from the same Factorio version.
+---------------------------------------------------------------------------------------------------
+Version: 2.1.3
+Date: 2026-06-30
+  Bugfixes:
+    - Fixed crash when adding Cargo Ships to an existing save.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.2
 Date: 2026-06-29
   Bugfixes:

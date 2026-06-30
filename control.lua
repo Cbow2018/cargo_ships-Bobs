@@ -777,7 +777,7 @@ script.on_configuration_changed(function(event)
   if event.old_version then
     log("Cargo Ships migrating save file from Factorio "..event.old_version)
   end
-  if event.mod_changes["cargo-ships"] then
+  if event.mod_changes["cargo-ships"] and event.mod_changes["cargo-ships"].old_version then
     log("Cargo Ships migrating save file from Cargo Ships "..event.mod_changes["cargo-ships"].old_version)
   end
   
@@ -786,7 +786,7 @@ script.on_configuration_changed(function(event)
   was_20 = (was_20 and was_20 == 1) or false
   -- If the previous version is not listed OR is listed and starts with 2.1, no migration is needed
   local was_21 = (not event.old_version) or (event.old_version and string.find(event.old_version, "2.1"))
-  was_21 = (was_21 and was_21 == 1) or false
+  was_21 = (was_21 and (was_21 == true or was_21 == 1)) or false
   
   if not (was_20 or was_21) then    -- Old map was saved before 2.0
     -- Reading a 1.1 or older save
@@ -794,9 +794,8 @@ script.on_configuration_changed(function(event)
     game.print({"cargo-ship-message.migration-11-warning"})
   end
   
-  if not was_21 and (event.mod_changes["cargo-ships"] and event.mod_changes["cargo-ships"].old_version) and        -- Old map from before 2.1 had cargo ships, and
-     not ((event.mod_changes["cargo-ships-oil-rig"] and event.mod_changes["cargo-ships-oil-rig"].new_version) and  -- One or both companion mods is not installed
-          (event.mod_changes["cargo-ships-floating-electric-pole"] and event.mod_changes["cargo-ships-floating-electric-pole"].new_version)) then
+  if not was_21 and (event.mod_changes["cargo-ships"] and event.mod_changes["cargo-ships"].old_version) and            -- Old map from before 2.1 had cargo ships, and
+     not (script.active_mods["cargo-ships-oil-rig"] and script.active_mods["cargo-ships-floating-electric-pole"]) then -- One or both companion mods is not installed
     log(">>> CARGO SHIPS 2.0 MIGRATION WARNING TRIGGERED <<<")
     game.print({"cargo-ship-message.migration-21-warning"})
   end
