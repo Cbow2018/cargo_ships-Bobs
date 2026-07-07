@@ -32,7 +32,6 @@ surface.set_tiles(water_tiles, true)
 local bp = "0eNqtmN2uoyAQx1+l4do2BcWP3uztvsOmMVSpJUfBILbbnPjui3p62rOrBybZpEmrZX78HWcGmHd0qnveaiENOrwjUSjZocOvd9SJSrJ6vCdZw9EB3Zjh+sbuaAiQkCX/jQ54CBYGKlHnhsk3rl+GkuEYIC6NMILPE0wX91z2zcmOPODgYd8ZzUR1MdvPGQPUqs5aKjlOY2lbkgXobr+tAlQKzYv5z2gU9BeYwMCJNzj8BBdMVyrvLqLNuayE5EvgeJfgNKFPPJfsVPO8VpXojCi6/HYR9rpRVyErdDizuuMBUlrYedmM2u+IBQjDm9mHonzxu+yLmjO9Pfe8njw/D7OjZC7k1VKUvs9mzyvr9s6w4s2yh+NgP/8+ZwRzIPV2IIWBQ29wDANjb3ACAmP/IE1hYP8gzYKFtFwgxrs0/j/xuSAC72GP5x9CGFY2sH8MYVjdwP5BhEMQ2T+IMCxT/YMIwzIV8PpgmQp4e89MbUW7VI/xbpYZ7eiwBABmpL+yzKVs/70ysncAXPaglPF/MEIcuhweJ6HDnjjsQdHvH0qEftG1NWpbadXLcgH6ovALF5MlcOwNjtbAi4JBq5R/spLU8YKo4wW5Ij/+3j4ErSKAfRx26EoculyBnzrsQeuB/3IQRg5dmUMXdSW0o9KEoOoOWEHDl+qutFll/Y2a9rrzb/RT3TalKDd31W/O9pCyafgPtDTX60KgNKtsotpd1MKcj/pEV7yRgbzhX6Ai14KAH3UpWVYWYV9AugIgvoBsBRD6AsaYWyRE3gS8QqDeBLJCiL0J4QoBVLoB++QItJ0BnC8iWFT7Vy8KqvaAMxwF7X8Ap04KOjFAzsmgBQLQwaCgLdNqz+Vo62px4WVff7R2alWoRhlxna7Dl/9HlLVUuvzoMn1fjwN0Y8LkhZLlpGQ2Mvd2lMyb1owy7Vwt0zz/uM3sBmo4Ts2Msd6r4m20l7Pcx6xq7HjY5zlNrY9w6mPNN62vz1qN3bBsBIxNFAt9NskCdOW6mzTTmGQ0IlGaJWkU2oT+A+y9W+o="
 
 local load = false
-local engine = nil
 
 local pumps = {
   "ship-unloading-pump",
@@ -169,7 +168,7 @@ local story_table =
         if #engines == 0 then
           error("Cargo ship engine not found")
         end
-        engine = engines[1]
+        local engine = engines[1]
 
         ---@cast engine -?
         for _, entity in pairs(engine.train.carriages) do
