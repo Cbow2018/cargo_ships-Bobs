@@ -2,20 +2,40 @@
 local tip = {
   name = "cargo-ships-tip-1",
   type = "tips-and-tricks-item",
-  tag = "[item=cargo_ship]",
+  tag = "[item=waterway]",
   category = "cargo-ships",
   order = "a-[cargo-ships]-1",
   indent = 1,
   simulation = {
     mods = {"cargo-ships"},
     game_view_settings = { 
-      efault_show_value = false,
+      default_show_value = false,
       show_controller_gui = true,
       show_quickbar = true,
       update_entity_selection = true,
       show_tool_bar = false
     },
     init_file = "__cargo-ships__/prototypes/tips-and-tricks/tip-1.lua"
+  }
+}
+
+local tip2 = {
+  name = "cargo-ships-tip-2",
+  type = "tips-and-tricks-item",
+  tag = "[item=oil_tanker]",
+  category = "cargo-ships",
+  order = "a-[cargo-ships]-2",
+  indent = 1,
+  simulation = {
+    mods = {"cargo-ships"},
+    game_view_settings = { 
+      default_show_value = false,
+      show_controller_gui = true,
+      show_quickbar = true,
+      update_entity_selection = true,
+      show_tool_bar = false
+    },
+    init_file = "__cargo-ships__/prototypes/tips-and-tricks/tip-2.lua"
   }
 }
 
@@ -33,5 +53,6 @@ data:extend{
     order = "a",
     image = "__cargo-ships-graphics__/assets/shortcut-tutorial.png"
   },
-  tip
+  tip,
+  tip2
 }
