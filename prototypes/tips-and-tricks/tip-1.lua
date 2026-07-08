@@ -50,10 +50,10 @@ local bp = "0eNqVldtqhDAQhl9F5joLHQ/r4aa3fYdSSnZNt4E1kRhrRXz3xpV2oaWQ/8pDnC/i7ze
 surface.create_entities_from_blueprint_string
 {
   string = bp,
-  position = {0, waterway_height}
+  position = {0, waterway_height},
+  force = player.force
 }
 
-local first = true
 local engine = nil
 
 local story_table =
@@ -77,37 +77,38 @@ local story_table =
       condition = story_elapsed_check(0.25),
       action = function()
         game.simulation.control_press{control = "give-waterway", notify = true}
-        
-      end
-    },
-    {
-      condition = story_elapsed_check(0.25),
-      action = function()
-        if first then
-          game.simulation.control_press{control = "rotate", notify = false}
-          game.simulation.control_press{control = "rotate", notify = false}
-        end
       end
     },
     {
       condition = function()
-        return game.simulation.move_cursor({position = {-11, waterway_height}})
+        return game.simulation.move_cursor({position = {-12.5, waterway_height}})
       end,
+    },
+    {
+      condition = story_elapsed_check(0.25),
       action = function()
-        game.simulation.control_down{control = "build", notify = true}
+        game.simulation.control_press{control = "build", notify = true}
       end
+    },
+    {
+      condition = story_elapsed_check(0.25),
     },
     {
       condition = function()
         return game.simulation.move_cursor({position = {11, waterway_height}})
-      end,
-      action = function()
-        game.simulation.control_up{control = "build", notify = true}
-        player.clear_cursor()
       end
     },
     {
       condition = story_elapsed_check(0.25),
+      action = function()
+        game.simulation.control_press{control = "build", notify = true}
+      end
+    },
+    {
+      condition = story_elapsed_check(0.25),
+      action = function()
+        player.clear_cursor()
+      end
     },
     {
       condition = function()
@@ -197,7 +198,6 @@ local story_table =
     {
       condition = story_elapsed_check(0.5),
       action = function()
-        first = false
         story_jump_to(storage.story, "start")
       end
     },
