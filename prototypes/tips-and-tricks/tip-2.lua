@@ -84,7 +84,7 @@ local story_table =
       end
     },
     {
-      condition = story_elapsed_check(10),
+      condition = story_elapsed_check(4),
     },
     {
       condition = function()
@@ -187,11 +187,6 @@ local story_table =
             entity.destroy()
           end
         end
-      end
-    },
-    {
-      condition = story_elapsed_check(0),
-      action = function()
         load = not load
         story_jump_to(storage.story, "start")
       end
