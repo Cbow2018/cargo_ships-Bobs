@@ -5,6 +5,7 @@ local tip = {
   tag = "[item=waterway]",
   category = "cargo-ships",
   order = "a-[cargo-ships]-1",
+  trigger = {type = "research", technology = "automated_water_transport"},
   indent = 1,
   simulation = {
     mods = {"cargo-ships"},
@@ -25,6 +26,7 @@ local tip2 = {
   tag = "[item=oil_tanker]",
   category = "cargo-ships",
   order = "a-[cargo-ships]-2",
+  trigger = {type = "research", technology = "tank_ship"},
   indent = 1,
   simulation = {
     mods = {"cargo-ships"},
@@ -44,7 +46,8 @@ local tip3 = {
   type = "tips-and-tricks-item",
   tag = "[item=boat]",
   category = "cargo-ships",
-  order = "a-[cargo-ships]-3",
+  order = "a-[cargo-ships]-0",
+  trigger = {type = "research", technology = "water_transport"},
   indent = 1,
   simulation = {
     mods = {"cargo-ships"},
@@ -71,6 +74,7 @@ data:extend{
     category = "cargo-ships",
     is_title = true,
     order = "a",
+    trigger = {type = "research", technology = "water_transport"},
     image = "__cargo-ships-graphics__/assets/shortcut-tutorial.png"
   },
   tip,
