@@ -13,7 +13,7 @@ player.set_quick_bar_slot(1, 1, "cargo_ship")
 game.simulation.camera_player = player
 game.simulation.camera_position = {0, 0.5}
 game.simulation.camera_player_cursor_position = player.position
--- game.simulation.camera_zoom = 0.5
+game.simulation.camera_zoom = 1.25
 
 local surface = game.surfaces[1]
 
