@@ -70,14 +70,3 @@ for _, character in pairs(data.raw.character) do
   end
 end
 
-
--- Factorio 2.1 requires rolling stock and its next_upgrade target to share the same connection_distance.
-for _, stock_type in pairs({ "locomotive", "cargo-wagon", "fluid-wagon", "artillery-wagon" }) do
-  if data.raw[stock_type] then
-    for _, name in pairs({ "boat", "boat_engine", "cargo_ship", "cargo_ship_engine", "oil_tanker" }) do
-      if data.raw[stock_type][name] then
-        data.raw[stock_type][name].next_upgrade = nil
-      end
-    end
-  end
-end

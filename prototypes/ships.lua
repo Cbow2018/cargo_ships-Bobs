@@ -457,6 +457,7 @@ indep_boat.corpse = nil
 local boat_max_speed = 0.27*speed_modifier
 
 local boat = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
+boat.next_upgrade = nil
 boat.name = "boat"
 boat.icons = {{icon=GRAPHICSPATH .. "icons/boat.png", icon_size = 64}}
 boat.icon = nil
@@ -492,7 +493,9 @@ boat.corpse = nil
 
 local boat_engine_power = 300 + (speed_modifier -1) * 150
 
+
 local boat_engine = table.deepcopy(data.raw["locomotive"]["locomotive"])
+boat_engine.next_upgrade = nil
 boat_engine.name = "boat_engine"
 boat_engine.flags = {"placeable-neutral",
                      "placeable-off-grid",
@@ -578,6 +581,7 @@ local cargo_ship_capacity = settings.startup["cargo_ship_capacity"].value
 local ship_max_speed = 0.15 * speed_modifier
 
 local cargo_ship = table.deepcopy(data.raw["cargo-wagon"]["cargo-wagon"])
+cargo_ship.next_upgrade = nil
 cargo_ship.name = "cargo_ship"
 cargo_ship.icons = {{icon=GRAPHICSPATH .. "icons/cargoship_icon.png", icon_size = 64}}
 cargo_ship.icon = nil
@@ -649,6 +653,7 @@ cargo_ship.corpse = nil
 local tanker_capacity = settings.startup["tanker_capacity"].value
 
 local oil_tanker = table.deepcopy(data.raw["fluid-wagon"]["fluid-wagon"])
+oil_tanker.next_upgrade = nil
 oil_tanker.name = "oil_tanker"
 oil_tanker.icon = GRAPHICSPATH .. "icons/tanker.png"
 oil_tanker.icon_size = 64
@@ -701,6 +706,7 @@ oil_tanker.connection_category = "ship_pump"
 local cargo_ship_engine_power = 2000 + (speed_modifier-1)*1200
 
 local cargo_ship_engine = table.deepcopy(data.raw["locomotive"]["locomotive"])
+cargo_ship_engine.next_upgrade = nil
 cargo_ship_engine.name = "cargo_ship_engine"
 cargo_ship_engine.minable = {mining_time = 1, result = nil}
 cargo_ship_engine.flags =  {"placeable-neutral",
